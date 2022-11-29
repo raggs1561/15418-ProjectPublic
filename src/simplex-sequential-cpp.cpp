@@ -151,19 +151,38 @@ private:
 
 
 int main(int argc, char *argv[]) {
-    std::vector<std::vector<double> > A = {{1.0, 3.0, 1.0},
-                                           {-1.0, 0.0, 3.0},
-                                           {2.0, -1.0, 2.0},
-                                           {2.0, 3.0, -1.0}};
+    std::vector<std::vector<double>> A;
+    int numRules, numVars;
+    std::cin >> numRules >> numVars;
 
-    std::vector<double> B = {3.0, 2.0, 4.0, 2.0};
+    A.resize(numRules);
+    for (int i = 0; i < numRules; i++)
+    {
+        A[i].resize(numVars);
+    }
+    for (int i = 0; i < numRules; i++)
+    {
+        for (int j = 0; j < numVars; j++)
+        {
+            std::cin >> A[i][j];
+        }
+    }
 
-    std::vector<double> C = {5.0, 5.0, 3.0};
+    std::vector<double> B;
+    B.resize(numRules);
+    for (int i = 0; i < numRules; i++)
+    {
+        std::cin >> B[i];
+    }
 
-    int m = 4;
-    int n = 3;
+    std::vector<double> C;
+    C.resize(numVars);
+    for (int i = 0; i < numVars; i++)
+    {
+        std::cin >> C[i];
+    }
 
-    Simplex lp(m, n, A, B, C);
+    Simplex lp(numRules, numVars, A, B, C);
 
     if (lp.lp_type == lp.UNBOUNDED) {
         std::cout << "unbounded" << std::endl;
@@ -171,7 +190,7 @@ int main(int argc, char *argv[]) {
         std::cout << "infeasible" << std::endl;
     } else if (lp.lp_type == lp.FEASIBLE) {
         std::cout << "The optimum is " << lp.z << std::endl;
-        for (int i = 0; i<n; i++) {
+        for (int i = 0; i<numVars; i++) {
             std::cout << "x" << i << " = " << lp.soln[i] << std::endl;
         }
     } else {

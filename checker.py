@@ -88,8 +88,22 @@ def parseInput():
         print(newA)
         print(newB)
 
-        np.savetxt(test_locations + test_name + "parsed_c.txt", c, newline=" ")
-        np.savetxt(test_locations + test_name + "parsed_A.txt", A, newline="\n")
-        np.savetxt(test_locations + test_name + "parsed_b.txt", b[rhs_names[0]], newline=" ")
+        with open(test_locations + test_name + '_parsed.txt', 'w') as outFile:
+            outFile.write('%d %d\n' % (len(newA), len(c))) #m, n
+            for rule in newA:
+                outStr = ''
+                for num in rule: 
+                    outStr += "%f " % num
+                outFile.write(outStr + '\n')
+            
+            outStr = ''
+            for rule in newB:
+                outStr += "%f " % rule
+            outFile.write(outStr + '\n')
+
+            outStr = ''
+            for rule in c:
+                outStr += "%f " % rule
+            outFile.write(outStr + '\n')
 
 parseInput()
