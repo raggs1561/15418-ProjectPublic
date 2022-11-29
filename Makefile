@@ -1,6 +1,6 @@
 OUTPUTDIR := bin/
 
-CFLAGS := -std=c++14 -fvisibility=hidden -lpthread
+CFLAGS := -std=c++14 -Wall
 
 ifeq (,$(CONFIGURATION))
 	CONFIGURATION := release
@@ -9,33 +9,32 @@ endif
 ifeq (debug,$(CONFIGURATION))
 CFLAGS += -g
 else
-CFLAGS += -O2 -fopenmp
+CFLAGS += -O2
 endif
 
 SOURCES := src/*.cpp
-HEADERS := src/*.h
+# HEADERS := src/*.h
 
-TARGETBIN := nbody-$(CONFIGURATION)
+TARGETBIN := simplex-$(CONFIGURATION)
 
 .SUFFIXES:
 .PHONY: all clean
 
 all: $(TARGETBIN)
 
-$(TARGETBIN): $(SOURCES) $(HEADERS)
+# $(TARGETBIN): $(SOURCES) $(HEADERS)
+$(TARGETBIN): $(SOURCES)
 	$(CXX) -o $@ $(CFLAGS) $(SOURCES) 
 
 format:
 	clang-format -i src/*.cpp src/*.h
 
 clean:
-	rm -rf ./nbody-$(CONFIGURATION)
+	rm -rf ./simplex-$(CONFIGURATION)
+	rm -rf ./inputs/*_parsed.txt
 
-check:	default
-	./checker.pl
+check: all
+	./checker.py
 
 FILES = src/*.cpp \
 		src/*.h
-
-handin.tar: $(FILES)
-	tar cvf handin.tar $(FILES)

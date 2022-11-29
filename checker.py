@@ -26,10 +26,10 @@ for each test case:
 print overall time taken at end
 '''
 
-def parseInput():
-    test_locations = "inputs/"
-    test_cases = ["testprob.mps"]
+test_locations = "inputs/"
+test_cases = ["testprob.mps"]
 
+def parseInput():
     for test_name in test_cases:
         test_location = test_locations + test_name
         res = smps.load_mps(test_location)
@@ -107,3 +107,4 @@ def parseInput():
             outFile.write(outStr + '\n')
 
 parseInput()
+os.system("cat " + test_locations + test_cases[0] + '_parsed.txt' + ' | ' + "./simplex-release")
