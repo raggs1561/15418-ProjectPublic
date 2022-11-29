@@ -44,9 +44,14 @@ def parseInput():
         assert(len(rhs_names) == 1) # Multiple right hand sides isn't supported
         b = res[9]
 
+        print(A)
+        print(b[rhs_names[0]])
+        print(c)
+
         rhsB = b[rhs_names[0]]
         newA = []
         newB = []
+        newC = c
 
         # Convert to standard form
         for i in range(len(relation)):
@@ -68,25 +73,61 @@ def parseInput():
         boundNames = res[10]
         varBounds = res[11]
 
+        print(np.array(newA))
+        print(newB)
+
         # Add variable bounds
         for bddName in boundNames:
             lowBound = varBounds[bddName]['LO']
             highBound = varBounds[bddName]['UP']
             assert(len(lowBound) == len(highBound))
-            numVars = len(lowBound)
-            for i in range(len(lowBound)): 
-                if lowBound[i] != -np.inf:
-                    newA.append(-1 * np.eye(1, numVars, i).flatten())
+
+            numRealVars = len(lowBound)
+            numTotalVars = numRealVars
+
+            for i in range(numRealVars):
+                if lowBound[i] == -np.inf and highBound[i] == np.inf:
+                    # replace this variable x_i with (x_i+ - x_i-)
+
+                    newC = np.append(newC, newC[i] * -1)
+
+                    # for all constraints with x, make the replacement
+                    # Since we have (n + 1) variables now, we add a column to A
+                    new_column = np.zeros((len(newA), 1))
+                    newA = np.append(newA, new_column, axis=1)
+
+                    # we still have len(relation) constraints
+                    for j in range(len(newA)):
+                        newA[j][-1] = -newA[j][i]
+                elif lowBound[i] < 0:
+                    # replace x_i >= lowBound[i] with x'i = x_i - lowBound[i] so x'_i >= 0
+                    # x_i = x'_i + lowBound[i]
+
+                    # update b accordingly
+                    # a * x_i means a * x'_i + a * lowBound[i] on the left hand side,
+                    # subtract b[j] by a * lowBound[i]
+                    for j in range(len(newB)):
+                        newB[j] -= lowBound[i] * newA[j][i]
+                if lowBound[i] > 0:
+                    newA.append(-1 * np.eye(1, numTotalVars, i).flatten())
                     newB.append(-1 * lowBound[i])
-            for i in range(len(highBound)): 
+                
                 if highBound[i] != np.inf:
-                    newA.append(np.eye(1, numVars, i).flatten())
+                    print(i)
+                    print(highBound[i])
+                    print("\n\n\n")
+                    newA.append(np.eye(1, numTotalVars, i).flatten())
                     newB.append(highBound[i])
         
         newA = np.array(newA)
         newB = np.array(newB)
         print(newA)
         print(newB)
+        print(newC)
+
+        print(varBounds)
+        print(boundNames)
+
 
         with open(test_locations + test_name + '_parsed.txt', 'w') as outFile:
             outFile.write('%d %d\n' % (len(newA), len(c))) #m, n
@@ -102,7 +143,7 @@ def parseInput():
             outFile.write(outStr + '\n')
 
             outStr = ''
-            for rule in c:
+            for rule in newC:
                 outStr += "%f " % rule
             outFile.write(outStr + '\n')
 
