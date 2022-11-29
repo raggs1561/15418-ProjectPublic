@@ -3,6 +3,7 @@
 import sys
 import os
 import re
+import numpy
 from pysmps import smps_loader as smps
 
 
@@ -32,6 +33,22 @@ for each test case:
 print overall time taken at end
 '''
 
-res = smps.load_mps("inputs/afiro.mps")
+def parseInput():
+    test_locations = "inputs/"
+    test_cases = ["testprob.mps"]
 
-# add a slack variable to each inequality to get an equality
+    for test_name in test_cases:
+        test_location = test_locations + test_name
+        res = smps.load_mps(test_location)
+
+        # Write c, a, b to standard form
+        c = res[6]
+        A = res[7]
+        rhs_names = res[8]
+        b = res[9]
+
+        numpy.savetxt(test_locations + test_name + "parsed_c.txt", c, newline=" ")
+        numpy.savetxt(test_locations + test_name + "parsed_A.txt", A, newline="\n")
+        numpy.savetxt(test_locations + test_name + "parsed_b.txt", b[rhs_names[0]], newline=" ")
+
+parseInput()
