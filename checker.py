@@ -3,18 +3,11 @@
 import sys
 import os
 import re
-import numpy
+import numpy as np
 from pysmps import smps_loader as smps
 
 
 # Usage: ./checker.py python/sequential-cpp/openmp-cpp 0/1
-
-'''
-version = sys.argv[1]
-load_balance = '-lb' if sys.argv[2] == '1' else ''
-prog = 'nbody-release-' + version
-workers = [16, 128] if version == 'v1' else [16, 121]
-'''
 
 # load pysymps
 '''
@@ -40,15 +33,63 @@ def parseInput():
     for test_name in test_cases:
         test_location = test_locations + test_name
         res = smps.load_mps(test_location)
+        print(res)
 
-        # Write c, a, b to standard form
+        # LP format is AX (relation) b, and minimize cX
+
+        relation = res[5] # L, G, E (<=, >=, ==)
         c = res[6]
         A = res[7]
         rhs_names = res[8]
+        assert(len(rhs_names) == 1) # Multiple right hand sides isn't supported
         b = res[9]
 
-        numpy.savetxt(test_locations + test_name + "parsed_c.txt", c, newline=" ")
-        numpy.savetxt(test_locations + test_name + "parsed_A.txt", A, newline="\n")
-        numpy.savetxt(test_locations + test_name + "parsed_b.txt", b[rhs_names[0]], newline=" ")
+        rhsB = b[rhs_names[0]]
+        newA = []
+        newB = []
+
+        # Convert to standard form
+        for i in range(len(relation)):
+            rel = relation[i]
+            if rel == 'L':
+                newA.append(A[i][:])
+                newB.append(rhsB[i])
+            elif rel == 'E':
+                newA.append(A[i][:])
+                newB.append(rhsB[i])
+                newA.append(-1 * A[i][:])
+                newB.append(-1 * rhsB[i])
+            elif rel == 'G':
+                newA.append(-1 * A[i][:])
+                newB.append(-1 * rhsB[i])
+            else: 
+                raise Exception("Unsupported relation type")
+        
+        boundNames = res[10]
+        varBounds = res[11]
+
+        # Add variable bounds
+        for bddName in boundNames:
+            lowBound = varBounds[bddName]['LO']
+            highBound = varBounds[bddName]['UP']
+            assert(len(lowBound) == len(highBound))
+            numVars = len(lowBound)
+            for i in range(len(lowBound)): 
+                if lowBound[i] != -np.inf:
+                    newA.append(-1 * np.eye(1, numVars, i).flatten())
+                    newB.append(-1 * lowBound[i])
+            for i in range(len(highBound)): 
+                if highBound[i] != np.inf:
+                    newA.append(np.eye(1, numVars, i).flatten())
+                    newB.append(highBound[i])
+        
+        newA = np.array(newA)
+        newB = np.array(newB)
+        print(newA)
+        print(newB)
+
+        np.savetxt(test_locations + test_name + "parsed_c.txt", c, newline=" ")
+        np.savetxt(test_locations + test_name + "parsed_A.txt", A, newline="\n")
+        np.savetxt(test_locations + test_name + "parsed_b.txt", b[rhs_names[0]], newline=" ")
 
 parseInput()
