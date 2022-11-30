@@ -175,7 +175,6 @@ class Simplex {
             
             p = A[r][n] / A[r][c];
 
-            # pragma omp parallel for
             for (int i = r + 1; i < m; i++) {
                 if (A[i][c] > EPS) {
                     double v = A[i][n] / A[i][c];

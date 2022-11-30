@@ -83,6 +83,17 @@ def parseInput(test_locations, test_cases):
             numTotalVars = numRealVars
 
             for i in range(numRealVars):
+                if lowBound[i] > 0:
+                    newA.append(-1 * np.eye(1, numTotalVars, i).flatten())
+                    newB.append(-1 * lowBound[i])
+                
+                if highBound[i] != np.inf:
+                    print(i)
+                    print(highBound[i])
+                    print("\n\n\n")
+                    newA.append(np.eye(1, numTotalVars, i).flatten())
+                    newB.append(highBound[i])
+                
                 if lowBound[i] == -np.inf and highBound[i] == np.inf:
                     # replace this variable x_i with (x_i+ - x_i-)
 
@@ -105,16 +116,6 @@ def parseInput(test_locations, test_cases):
                     # subtract b[j] by a * lowBound[i]
                     for j in range(len(newB)):
                         newB[j] -= lowBound[i] * newA[j][i]
-                if lowBound[i] > 0:
-                    newA.append(-1 * np.eye(1, numTotalVars, i).flatten())
-                    newB.append(-1 * lowBound[i])
-                
-                if highBound[i] != np.inf:
-                    print(i)
-                    print(highBound[i])
-                    print("\n\n\n")
-                    newA.append(np.eye(1, numTotalVars, i).flatten())
-                    newB.append(highBound[i])
         
         newA = np.array(newA)
         # newA = np.tile(newA, 5)
@@ -151,7 +152,7 @@ workers = [16, 64, 128]
 version = sys.argv[1]
 
 test_locations = "inputs/"
-test_cases = ["lotfi.mps"]
+test_cases = ["israel.mps"]
 
 
 parseInput(test_locations, test_cases)
