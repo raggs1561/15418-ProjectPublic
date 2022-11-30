@@ -130,13 +130,12 @@ Our poster will include an overview of our project and how we parallelized the S
 ## Preliminary Results::
 
 Our initial results are as follows:
-'''
+
 Sequential Version:
 Time difference = 1612 microseconds
 
 OpenMP version:
 Time difference = 1592 microseconds
-'''
 
 This is a speedup from running our OpenMP algorithm on a sample linear programming input.
 
