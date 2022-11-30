@@ -1,6 +1,6 @@
 OUTPUTDIR := bin/
 
-CFLAGS := -std=c++14 -Wall
+CFLAGS := -std=c++14 -Wall -fvisibility=hidden -lpthread -fopenmp
 
 ifeq (,$(CONFIGURATION))
 	CONFIGURATION := release
@@ -12,25 +12,25 @@ else
 CFLAGS += -O2
 endif
 
-SOURCES := src/*.cpp
-# HEADERS := src/*.h
-
 TARGETBIN := simplex-$(CONFIGURATION)
 
 .SUFFIXES:
 .PHONY: all clean
 
-all: $(TARGETBIN)
+all: simplex-seq simplex-openmp
 
-# $(TARGETBIN): $(SOURCES) $(HEADERS)
-$(TARGETBIN): $(SOURCES)
-	$(CXX) -o $@ $(CFLAGS) $(SOURCES) 
+simplex-seq: src/simplex-sequential.cpp
+	$(CXX) -o $@ $(CFLAGS) src/simplex-sequential.cpp
+
+simplex-openmp: src/simplex-openmp.cpp
+	$(CXX) -o $@ $(CFLAGS) src/simplex-openmp.cpp
 
 format:
 	clang-format -i src/*.cpp src/*.h
 
 clean:
-	rm -rf ./simplex-$(CONFIGURATION)
+	rm -rf ./simplex-openmp
+	rm -rf ./simplex-seq
 	rm -rf ./inputs/*_parsed.txt
 
 check: all

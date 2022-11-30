@@ -7,7 +7,7 @@ import numpy as np
 from pysmps import smps_loader as smps
 
 
-# Usage: ./checker.py python/sequential-cpp/openmp-cpp 0/1
+# Usage: ./checker.py sequential-cpp/openmp-cpp 0/1
 
 # load pysymps
 '''
@@ -26,14 +26,11 @@ for each test case:
 print overall time taken at end
 '''
 
-test_locations = "inputs/"
-test_cases = ["testprob.mps"]
-
-def parseInput():
+def parseInput(test_locations, test_cases):
     for test_name in test_cases:
         test_location = test_locations + test_name
         res = smps.load_mps(test_location)
-        print(res)
+        # print(res)
 
         # LP format is AX (relation) b, and minimize cX
 
@@ -73,8 +70,8 @@ def parseInput():
         boundNames = res[10]
         varBounds = res[11]
 
-        print(np.array(newA))
-        print(newB)
+        # print(np.array(newA))
+        # print(newB)
 
         # Add variable bounds
         for bddName in boundNames:
@@ -120,13 +117,15 @@ def parseInput():
                     newB.append(highBound[i])
         
         newA = np.array(newA)
+        # newA = np.tile(newA, 5)
         newB = np.array(newB)
-        print(newA)
-        print(newB)
-        print(newC)
+        # newB = np.tile(newB, 5)
+        # print(newA)
+        # print(newB)
+        # print(newC)
 
-        print(varBounds)
-        print(boundNames)
+        # print(varBounds)
+        # print(boundNames)
 
 
         with open(test_locations + test_name + '_parsed.txt', 'w') as outFile:
@@ -147,5 +146,20 @@ def parseInput():
                 outStr += "%f " % rule
             outFile.write(outStr + '\n')
 
-parseInput()
-os.system("cat " + test_locations + test_cases[0] + '_parsed.txt' + ' | ' + "./simplex-release")
+program = "simplex-" + sys.argv[0]
+workers = [16, 64, 128]
+version = sys.argv[1]
+
+test_locations = "inputs/"
+test_cases = ["lotfi.mps"]
+
+
+parseInput(test_locations, test_cases)
+
+print("Sequential Version:")
+os.system("cat " + test_locations + test_cases[0] + '_parsed.txt' + ' | ' + "./simplex-seq")
+
+print("\n\n\n")
+print("OpenMP Version:")
+
+os.system("cat " + test_locations + test_cases[0] + '_parsed.txt' + ' | ' + "./simplex-openmp")
