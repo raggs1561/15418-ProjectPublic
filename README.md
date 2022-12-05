@@ -95,3 +95,50 @@ Week 3 (November 21 to November 25): Finish Parallelizing Simplex Algorithm, Imp
 Week 4 (November 28 to December 2): Optimize Parallel Simplex Code, Get Simplex Visuals, Implement Parallel Karmarkar's Algorithm
 
 Week 5 (December 5 to December 9): Finish Final Report + Poster
+
+# Milestone 1
+
+## Summary of Progress Made So Far
+
+We used code from 15-451's simplex algorithm implementation to implement our sequential version. This code in the public domain so we decided to use his code as a sequential baseline. Additionally, since it was used for 15-451's homeworks, it's been tested already. We did not know of this sequential implementation when writing our project proposal. We set up a Git repository, Makefile, and a checker to run both implementations and compare runtime. Since many linear programs are not in standard form and our baseline code only solves linear programs in standard form, we wrote a parser that converts arbitrary inputs into standard form. This involved a few operations on the inputs to ensure all variables are $\geq 0$, and that all constraints are of the less than or equal to form. Additionally, our goal function has been changed to a maximum goal. Our parser for input is written in Python and saves the standard form to a text file that is piped to our C++ solver as input.We wrote a basic parser and converter in Python. However, due to the large size of some inputs (with uncompressed versions reaching the hundreds of megabytes), we have found our current setup to be inefficient.
+
+We then began work on basic parallelization of our code using OpenMP to test the feasibility of our approach. We initially found that the overhead of OpenMP overpowered the gains made from the parallel processing. This was due to synchronization issues with certain parts of the algorithm we attempted to parallelize. We were able to overcome this overhead to achieve a speedup slightly faster than our sequential algorithm. 
+
+## Our Schedule:
+
+We are currently on track with our original schedule. In our original schedule, this week (Nov. 28 to Dec. 2nd) was dedicated to optimizing the OpenMP implementation of the Simplex algorithm and getting visualizations of our performance boosts. We are still working on this right now. Our plans are to use synchronization better and profile our existing implementation. Since we are on track with our schedule, we believe we can produce all our deliverables. As far as nice to have goals (e.g. CUDA implementation, interior point methods), we believe that we may be able to work on CUDA if we finish the work for our required deliverables early.
+
+Revised Schedule:
+
+Week 4 (Nov. 28 to Dec. 2):
+- Optimize Parallel Simplex Code (Raghav, Charlie, 11/30 to 12/2)
+- Attempt better synchronization scheme (Raghav, Charlie, 11/30 to 12/2)
+- Fix checker.py script so we can test new parallel code faster (Raghav, 11/30)
+- Start work on CUDA Simplex Implementation (Raghav, Charlie, 12/3 to 12/5)
+Week 5 (Dec. 5 to Dec. 9):
+- Finish Implementing CUDA implementation (Raghav, Charlie, 12/5 to 12/7)
+- Evaluate using the Thrust library with CUDA (Charlie, 12/5 to 12/7)
+- Benchmark CUDA Implementation (Raghav, 12/7)
+- Create Final Report (Raghav, 12/5 to 12/8)
+- Create Final Poster (Raghav, Charlie, 12/5 to 12/7)
+- Prepare for presenting the final poster (Raghav, Charlie, 12/7 to 12/8)
+
+## Poster Session Data:
+
+Our poster will include an overview of our project and how we parallelized the Simplex algorithm with OpenMP. In order to demonstrate our findings with our parallelization attempts, we plan to show graphs on how our sequential and OpenMP algorithms perform on different linear programs. We plan to explain our speedups as well by using performance tools mentioned in this class, such as perf.
+
+## Preliminary Results::
+
+Our initial results are as follows:
+
+Sequential Version:
+Time difference = 1612 microseconds
+
+OpenMP version:
+Time difference = 1592 microseconds
+
+This is a speedup from running our OpenMP algorithm on a sample linear programming input.
+
+## Our Concerns:
+
+We are concerned with finishing everything in time. We believe that we can get a 100 percent implementation of our code working by the early deadline. Finishing the project and presentation during the last week while attempting our 125 percent deliverables may be difficult. Finding areas to improve parallelism with OpenMP will be hard, as we have been stuck on optimizing our current OpenMP implementation further. If we can't optimize our OpenMP implementation further, we will have to find out why we can't optimize further.

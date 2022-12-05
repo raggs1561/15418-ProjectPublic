@@ -26,8 +26,28 @@ for each test case:
 print overall time taken at end
 '''
 
-def parseInput(test_locations, test_cases):
-    for test_name in test_cases:
+
+def writeArrays(outputFile, A, b, c):
+    with open(outputFile, 'w') as outFile:
+        outFile.write('%d %d\n' % (len(A), len(c))) #m, n
+        for rule in A:
+            outStr = []
+            for num in rule: 
+                outStr.append("%f " % num)
+            outFile.write(''.join(outStr) + '\n')
+        
+        outStr = []
+        for rule in b:
+            outStr.append("%f " % rule)
+        outFile.write(''.join(outStr) + '\n')
+
+        outStr = []
+        for rule in c:
+            outStr.append("%f " % rule)
+        outFile.write(''.join(outStr) + '\n')
+
+
+def parseInput(test_locations, test_name):
         test_location = test_locations + test_name
         res = smps.load_mps(test_location)
         # print(res)
@@ -127,40 +147,35 @@ def parseInput(test_locations, test_cases):
 
         # print(varBounds)
         # print(boundNames)
+        writeArrays(test_locations + test_name + '_parsed.txt', newA, newB, newC)
+        return test_locations + test_name + '_parsed.txt'
 
 
-        with open(test_locations + test_name + '_parsed.txt', 'w') as outFile:
-            outFile.write('%d %d\n' % (len(newA), len(c))) #m, n
-            for rule in newA:
-                outStr = ''
-                for num in rule: 
-                    outStr += "%f " % num
-                outFile.write(outStr + '\n')
-            
-            outStr = ''
-            for rule in newB:
-                outStr += "%f " % rule
-            outFile.write(outStr + '\n')
 
-            outStr = ''
-            for rule in newC:
-                outStr += "%f " % rule
-            outFile.write(outStr + '\n')
+def genRandomInput(numVariables, numConstraints):
+    A = np.random.random((numConstraints, numVariables)) * 10000
+    b = np.random.random(numConstraints) * 10000
+    c = np.random.random(numVariables) * 10000
+    writeArrays('inputs/random_parsed.txt', A, b, c)
+    return 'inputs/random_parsed.txt'
+
 
 program = "simplex-" + sys.argv[0]
 workers = [16, 64, 128]
-version = sys.argv[1]
 
 test_locations = "inputs/"
 test_cases = ["israel.mps"]
 
+for case in test_cases:
+    # input_file = parseInput(test_locations, case)
+    # input_file = genRandomInput(5000, 5000)
+    print("Generated inputs")
 
-parseInput(test_locations, test_cases)
+    print("Sequential Version:")
+    # os.system("cat " + input_file + ' | ' + "./simplex-seq")
+    os.system("./simplex-seq")
 
-print("Sequential Version:")
-os.system("cat " + test_locations + test_cases[0] + '_parsed.txt' + ' | ' + "./simplex-seq")
+    print("OpenMP Version:")
 
-print("\n\n\n")
-print("OpenMP Version:")
-
-os.system("cat " + test_locations + test_cases[0] + '_parsed.txt' + ' | ' + "./simplex-openmp")
+    # os.system("cat " + input_file + ' | ' + "./simplex-openmp")
+    os.system("./simplex-openmp")

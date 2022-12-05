@@ -181,9 +181,16 @@ class Simplex {
 };
 
 int main(int argc, char *argv[]) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
     std::vector<std::vector<double>> A;
-    int numRules, numVars;
-    std::cin >> numRules >> numVars;
+
+    int numRules = 20000;
+    int numVars = 20000;
+    srand(1);
+
+    // std::cin >> numRules >> numVars;
+    auto randFloat = [](){return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/100000.f));};
 
     A.resize(numRules);
     for (int i = 0; i < numRules; i++) {
@@ -191,25 +198,31 @@ int main(int argc, char *argv[]) {
     }
     for (int i = 0; i < numRules; i++) {
         for (int j = 0; j < numVars; j++) {
-            std::cin >> A[i][j];
+            // std::cin >> A[i][j];
+            A[i][j] = randFloat();
         }
     }
 
     std::vector<double> B;
     B.resize(numRules);
     for (int i = 0; i < numRules; i++) {
-        std::cin >> B[i];
+        // std::cin >> B[i];
+        B[i] = randFloat();
     }
 
     std::vector<double> C;
     C.resize(numVars);
     for (int i = 0; i < numVars; i++) {
-        std::cin >> C[i];
+        // std::cin >> C[i];
+        C[i] = randFloat();
     }
     
+    std::cout << "Loaded"  << std::endl;
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     Simplex lp(numRules, numVars, A, B, C);
+
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
     if (lp.lp_type == lp.UNBOUNDED) {
         std::cout << "unbounded" << std::endl;
@@ -217,16 +230,16 @@ int main(int argc, char *argv[]) {
         std::cout << "infeasible" << std::endl;
     } else if (lp.lp_type == lp.FEASIBLE) {
         std::cout << "The optimum is " << lp.z << std::endl;
-        for (int i = 0; i < numVars; i++) {
-            std::cout << "x" << i << " = " << lp.soln[i] << std::endl;
-        }
+        // for (int i = 0; i < numVars; i++) {
+        //     std::cout << "x" << i << " = " << lp.soln[i] << std::endl;
+        // }
     } else {
         std::cout << "Should not have happened" << std::endl;
     }
-    
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
 
 }
