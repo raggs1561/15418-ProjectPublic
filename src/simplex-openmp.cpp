@@ -57,6 +57,7 @@ class Simplex {
         // m constraints, n variables here
 
         // Create constraint matrix, resize to add the B matrix as the last column
+        #pragma omp parallel for
         for (unsigned int i = 0; i < A.size(); i++) {
             A[i].resize(n + 1);
         }
@@ -95,7 +96,7 @@ class Simplex {
             struct Compare max;
             max.val = p;
             max.index = c;
-            #pragma omp parallel reduction(maximum: max)
+            #pragma omp parallel reduction(maximum:max)
             for (int i = 0; i < n; i++) {
                 if (A[m][i] > max.val) {
                     max.val = A[m][i];
@@ -104,6 +105,29 @@ class Simplex {
             }
             p = max.val; 
             c = max.index;
+            /*
+            #pragma omp parallel
+            {
+                int p_local = p;
+                int c_local = c;
+
+                #pragma omp for nowait
+                for (int i = 0; i < n; i++) {
+                    if(A[m][i] > p_local) {
+                        p_local = A[m][i];
+                        c_local = i;
+                    }
+                }
+
+                #pragma omp critical
+                {
+                    if (p_local > p) {
+                        p = p_local;
+                        c = c_local;
+                    }
+                }
+            }
+            */
 
             if (p < EPS) {
                 # pragma omp parallel for
@@ -121,17 +145,53 @@ class Simplex {
                 break;
             }
             p = INF;
-            
-            # pragma omp parallel for
+
+            struct Compare min;
+            min.val = p;
+            min.index = r;
+            std::vector<double> v(m, min.val);
+
+            #pragma omp parallel for 
             for (int i = 0; i < m; i++) {
                 if (A[i][c] > EPS) {
-                    double v = A[i][n] / A[i][c];
-                    if (v < p) {
-                        p = v;
-                        r = i;
+                    v[i] = A[i][n] / A[i][c];
+                }
+            }
+
+            /*
+            #pragma omp parallel for reduction(minimum:min)
+            for (int i = 0; i < m; i++) {
+                if (v[i] < min.val) {
+                    min.val = v[i];
+                    min.index = i;
+                }
+            }
+            p = min.val; 
+            r = min.index;
+            */
+            
+            #pragma omp parallel
+            {
+                double p_local = p;
+                int r_local = r;
+
+                #pragma omp for nowait
+                for (int i = 0; i < m; i++) {
+                    if(v[i] < p_local) {
+                        p_local = v[i];
+                        r_local = i;
+                    }
+                }
+
+                #pragma omp critical
+                {
+                    if (p_local < p) {
+                        p = p_local;
+                        r = r_local;
                     }
                 }
             }
+
             if (p == INF) {
                 lp_type = UNBOUNDED;
                 break;
@@ -168,6 +228,7 @@ class Simplex {
         # pragma omp parallel for
         for (int i = 0; i <= m; i++) {
             if (i != r) {
+                # pragma omp parallel for
                 for (int j = 0; j <= n; j++) {
                     if (j != c)
                         A[i][j] -= A[i][c] * A[r][j];
@@ -182,54 +243,61 @@ class Simplex {
         while (true) {
             double p = INF;
             
-            struct Compare max;
-            max.val = p;
-            max.index = r;
-            #pragma omp parallel for reduction(maximum:max)
+            struct Compare min;
+            min.val = p;
+            min.index = r;
+            #pragma omp parallel for reduction(minimum:min)
             for (int i = 0; i < m; i++) {
-                if (A[i][n] < max.val) {
-                    max.val = A[i][n];
-                    max.index = i;
+                if (A[i][n] < min.val) {
+                    min.val = A[i][n];
+                    min.index = i;
                 }
             }
-            p = max.val; 
-            r = max.index;
+            p = min.val; 
+            r = min.index;
 
             if (p > -EPS)
                 return true;
             
             p = 0.0;
-            max.val = p;
-            max.index = c;
-            #pragma omp parallel for reduction(maximum:max)
+            min.val = p;
+            min.index = c;
+            #pragma omp parallel for reduction(minimum:min)
             for (int i = 0; i < n; i++) {
-                if (A[r][i] < max.val) {
-                    max.val = A[r][n];
-                    max.index = i;
+                if (A[r][i] < min.val) {
+                    min.val = A[r][i];
+                    min.index = i;
                 }
             }
-            p = max.val; 
-            c = max.index;
+            p = min.val; 
+            c = min.index;
 
             if (p > -EPS)
                 return false;
             
             p = A[r][n] / A[r][c];
             
-            max.val = p;
-            max.index = r;
-            #pragma omp parallel for reduction(maximum:max)
+            min.val = p;
+            min.index = r;
+            std::vector<double> v(m, min.val);
+
+            #pragma omp parallel for 
             for (int i = r + 1; i < m; i++) {
+                v[i] = min.val;
                 if (A[i][c] > EPS) {
-                    double v = A[i][n] / A[i][c];
-                    if (v < max.val) {
-                        max.val = v;
-                        max.index = i;
-                    }
+                    v[i] = A[i][n] / A[i][c];
                 }
             }
-            p = max.val; 
-            r = max.index;
+
+            #pragma omp parallel for reduction(minimum:min)
+            for (int i = r + 1; i < m; i++) {
+                if (v[i] < min.val) {
+                    min.val = v[i];
+                    min.index = i;
+                }
+            }
+            p = min.val; 
+            r = min.index;
 
             Pivot(r, c);
         }
