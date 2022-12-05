@@ -1,6 +1,7 @@
 // This code was adapted from simplex.java by Danny Sleator (which in turn was
 // adapted from UBC CODERCHIVE 2014).
 // It is in the public domain. --- Carl Kingsford Nov. 2017
+// We got this code from 15-451.
 
 #include <iostream>
 #include <vector>
@@ -8,6 +9,10 @@
 #include <omp.h>
 
 using namespace std;
+
+struct Compare { double val; int index; };    
+#pragma omp declare reduction(minimum : struct Compare : omp_out = omp_in.val < omp_out.val ? omp_in : omp_out)
+#pragma omp declare reduction(maximum : struct Compare : omp_out = omp_in.val > omp_out.val ? omp_in : omp_out)
 
 class Simplex {
 
@@ -51,25 +56,33 @@ class Simplex {
     {
         // m constraints, n variables here
 
+        // Create constraint matrix, resize to add the B matrix as the last column
         for (unsigned int i = 0; i < A.size(); i++) {
             A[i].resize(n + 1);
         }
-
+        
+        #pragma omp parallel for
         for (int j = 0; j < m; j++)
             basic[j] = n + j;
+
+        #pragma omp parallel for
         for (int i = 0; i < n; i++)
             nonbasic[i] = i;
         
         # pragma omp parallel for
         for (int i = 0; i < m; i++) {
             A[i][n] = B[i];
+            # pragma omp parallel for
             for (int j = 0; j < n; j++)
                 A[i][j] = A0[i][j];
         }
 
+        // Add c vector to A
+        #pragma omp parallel for
         for (int j = 0; j < n; j++)
             A[m][j] = C[j];
 
+        // Don't run simplex on an infeasible LP
         if (!Feasible()) {
             lp_type = INFEASIBLE;
             return;
@@ -79,10 +92,18 @@ class Simplex {
             int r = 0, c = 0;
             double p = 0.0;
             
+            struct Compare max;
+            max.val = p;
+            max.index = c;
+            #pragma omp parallel reduction(maximum: max)
             for (int i = 0; i < n; i++) {
-                if (A[m][i] > p)
-                    p = A[m][c = i];
+                if (A[m][i] > max.val) {
+                    max.val = A[m][i];
+                    max.index = i;
+                }
             }
+            p = max.val; 
+            c = max.index;
 
             if (p < EPS) {
                 # pragma omp parallel for
@@ -160,30 +181,56 @@ class Simplex {
         int r = 0, c = 0;
         while (true) {
             double p = INF;
-            for (int i = 0; i < m; i++)
-                if (A[i][n] < p)
-                    p = A[r = i][n];
+            
+            struct Compare max;
+            max.val = p;
+            max.index = r;
+            #pragma omp parallel for reduction(maximum:max)
+            for (int i = 0; i < m; i++) {
+                if (A[i][n] < max.val) {
+                    max.val = A[i][n];
+                    max.index = i;
+                }
+            }
+            p = max.val; 
+            r = max.index;
+
             if (p > -EPS)
                 return true;
             
             p = 0.0;
-            for (int i = 0; i < n; i++)
-                if (A[r][i] < p)
-                    p = A[r][c = i];
+            max.val = p;
+            max.index = c;
+            #pragma omp parallel for reduction(maximum:max)
+            for (int i = 0; i < n; i++) {
+                if (A[r][i] < max.val) {
+                    max.val = A[r][n];
+                    max.index = i;
+                }
+            }
+            p = max.val; 
+            c = max.index;
+
             if (p > -EPS)
                 return false;
             
             p = A[r][n] / A[r][c];
-
+            
+            max.val = p;
+            max.index = r;
+            #pragma omp parallel for reduction(maximum:max)
             for (int i = r + 1; i < m; i++) {
                 if (A[i][c] > EPS) {
                     double v = A[i][n] / A[i][c];
-                    if (v < p) {
-                        p = v;
-                        r = i;
+                    if (v < max.val) {
+                        max.val = v;
+                        max.index = i;
                     }
                 }
             }
+            p = max.val; 
+            r = max.index;
+
             Pivot(r, c);
         }
     }
@@ -226,9 +273,11 @@ int main(int argc, char *argv[]) {
         std::cout << "infeasible" << std::endl;
     } else if (lp.lp_type == lp.FEASIBLE) {
         std::cout << "The optimum is " << lp.z << std::endl;
+        /*
         for (int i = 0; i < numVars; i++) {
             std::cout << "x" << i << " = " << lp.soln[i] << std::endl;
         }
+        */
     } else {
         std::cout << "Should not have happened" << std::endl;
     }
