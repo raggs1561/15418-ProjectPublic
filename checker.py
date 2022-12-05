@@ -168,13 +168,14 @@ test_cases = ["israel.mps"]
 
 for case in test_cases:
     # input_file = parseInput(test_locations, case)
-    input_file = genRandomInput(5000, 5000)
+    # input_file = genRandomInput(5000, 5000)
     print("Generated inputs")
 
     print("Sequential Version:")
-    os.system("cat " + input_file + ' | ' + "./simplex-seq")
+    # os.system("cat " + input_file + ' | ' + "./simplex-seq")
+    os.system("./simplex-seq")
 
-    print("\n\n\n")
     print("OpenMP Version:")
 
-    os.system("cat " + input_file + ' | ' + "./simplex-openmp")
+    # os.system("cat " + input_file + ' | ' + "./simplex-openmp")
+    os.system("./simplex-openmp")

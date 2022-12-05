@@ -184,8 +184,13 @@ int main(int argc, char *argv[]) {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     std::vector<std::vector<double>> A;
-    int numRules, numVars;
-    std::cin >> numRules >> numVars;
+
+    int numRules = 20000;
+    int numVars = 20000;
+    srand(1);
+
+    // std::cin >> numRules >> numVars;
+    auto randFloat = [](){return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/100000.f));};
 
     A.resize(numRules);
     for (int i = 0; i < numRules; i++) {
@@ -193,20 +198,23 @@ int main(int argc, char *argv[]) {
     }
     for (int i = 0; i < numRules; i++) {
         for (int j = 0; j < numVars; j++) {
-            std::cin >> A[i][j];
+            // std::cin >> A[i][j];
+            A[i][j] = randFloat();
         }
     }
 
     std::vector<double> B;
     B.resize(numRules);
     for (int i = 0; i < numRules; i++) {
-        std::cin >> B[i];
+        // std::cin >> B[i];
+        B[i] = randFloat();
     }
 
     std::vector<double> C;
     C.resize(numVars);
     for (int i = 0; i < numVars; i++) {
-        std::cin >> C[i];
+        // std::cin >> C[i];
+        C[i] = randFloat();
     }
     
     std::cout << "Loaded"  << std::endl;
