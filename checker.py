@@ -168,7 +168,7 @@ test_cases = ["israel.mps"]
 
 for case in test_cases:
     # input_file = parseInput(test_locations, case)
-    input_file = genRandomInput(4000, 4000)
+    input_file = genRandomInput(5000, 5000)
     print("Generated inputs")
 
     print("Sequential Version:")

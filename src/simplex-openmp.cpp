@@ -218,7 +218,6 @@ int main(int argc, char *argv[]) {
         std::cin >> C[i];
     }
     std::cout << "Loaded"  << std::endl;
-    std::cout << "Loaded"  << std::endl;
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     Simplex lp(numRules, numVars, A, B, C);
