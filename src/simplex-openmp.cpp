@@ -192,6 +192,8 @@ class Simplex {
                 }
             }
 
+            #pragma omp barrier
+
             if (p == INF) {
                 lp_type = UNBOUNDED;
                 break;
