@@ -219,6 +219,8 @@ int main(int argc, char *argv[]) {
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     Simplex lp(numRules, numVars, A, B, C);
+    
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
     if (lp.lp_type == lp.UNBOUNDED) {
         std::cout << "unbounded" << std::endl;
@@ -226,15 +228,15 @@ int main(int argc, char *argv[]) {
         std::cout << "infeasible" << std::endl;
     } else if (lp.lp_type == lp.FEASIBLE) {
         std::cout << "The optimum is " << lp.z << std::endl;
-        for (int i = 0; i < numVars; i++) {
-            std::cout << "x" << i << " = " << lp.soln[i] << std::endl;
-        }
+        // for (int i = 0; i < numVars; i++) {
+        //     std::cout << "x" << i << " = " << lp.soln[i] << std::endl;
+        // }
     } else {
         std::cout << "Should not have happened" << std::endl;
     }
 
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
 }
