@@ -181,6 +181,8 @@ class Simplex {
 };
 
 int main(int argc, char *argv[]) {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
     std::vector<std::vector<double>> A;
     int numRules, numVars;
     std::cin >> numRules >> numVars;
@@ -207,6 +209,7 @@ int main(int argc, char *argv[]) {
         std::cin >> C[i];
     }
     
+    std::cout << "Loaded"  << std::endl;
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     Simplex lp(numRules, numVars, A, B, C);

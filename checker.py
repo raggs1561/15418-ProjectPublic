@@ -31,20 +31,20 @@ def writeArrays(outputFile, A, b, c):
     with open(outputFile, 'w') as outFile:
         outFile.write('%d %d\n' % (len(A), len(c))) #m, n
         for rule in A:
-            outStr = ''
+            outStr = []
             for num in rule: 
-                outStr += "%f " % num
-            outFile.write(outStr + '\n')
+                outStr.append("%f " % num)
+            outFile.write(''.join(outStr) + '\n')
         
-        outStr = ''
+        outStr = []
         for rule in b:
-            outStr += "%f " % rule
-        outFile.write(outStr + '\n')
+            outStr.append("%f " % rule)
+        outFile.write(''.join(outStr) + '\n')
 
-        outStr = ''
+        outStr = []
         for rule in c:
-            outStr += "%f " % rule
-        outFile.write(outStr + '\n')
+            outStr.append("%f " % rule)
+        outFile.write(''.join(outStr) + '\n')
 
 
 def parseInput(test_locations, test_name):
