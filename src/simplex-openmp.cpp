@@ -7,6 +7,7 @@
 #include <vector>
 #include <chrono>
 #include <omp.h>
+#include <random>
 
 using namespace std;
 
@@ -290,10 +291,10 @@ int main(int argc, char *argv[]) {
     std::vector<std::vector<double>> A;
     int numRules = 20000;
     int numVars = 20000;
-    srand(1);
+    std::mt19937 randGen(1);
+    std::uniform_real_distribution<double>randReal(0, 100000.f);
 
-    // std::cin >> numRules >> numVars;
-    auto randFloat = [](){return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/100000.f));};
+    auto randFloat = [&](){return randReal(randGen) ;};
 
     A.resize(numRules);
     for (int i = 0; i < numRules; i++) {
