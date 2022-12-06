@@ -129,46 +129,26 @@ class Simplex {
             }
             */
 
+            # pragma omp parallel
+            {
             if (p < EPS) {
-                # pragma omp parallel for
+                #pragma omp for
                 for (int j = 0; j < n; j++)
                     if (nonbasic[j] < n)
                         soln[nonbasic[j]] = 0;
 
-                # pragma omp parallel for
+                # pragma omp for
                 for (int i = 0; i < m; i++)
                     if (basic[i] < n)
                         soln[basic[i]] = A[i][n];
                 
                 z = -A[m][n];
                 lp_type = FEASIBLE;
-                break;
             }
+            }
+            if (lp_type == FEASIBLE) break;
+
             p = INF;
-
-            struct Compare min;
-            min.val = p;
-            min.index = r;
-            std::vector<double> v(m, min.val);
-
-            #pragma omp parallel for 
-            for (int i = 0; i < m; i++) {
-                if (A[i][c] > EPS) {
-                    v[i] = A[i][n] / A[i][c];
-                }
-            }
-
-            /*
-            #pragma omp parallel for reduction(minimum:min)
-            for (int i = 0; i < m; i++) {
-                if (v[i] < min.val) {
-                    min.val = v[i];
-                    min.index = i;
-                }
-            }
-            p = min.val; 
-            r = min.index;
-            */
             
             #pragma omp parallel
             {
@@ -177,9 +157,12 @@ class Simplex {
 
                 #pragma omp for nowait
                 for (int i = 0; i < m; i++) {
-                    if(v[i] < p_local) {
-                        p_local = v[i];
-                        r_local = i;
+                    if (A[i][c] > EPS) {
+                        double val = A[i][n] / A[i][c];
+                        if(val < p_local) {
+                            p_local = val;
+                            r_local = i;
+                        }
                     }
                 }
 
@@ -192,7 +175,8 @@ class Simplex {
                 }
             }
 
-            #pragma omp barrier
+            // Is this needed? 
+            // #pragma omp barrier
 
             if (p == INF) {
                 lp_type = UNBOUNDED;
@@ -281,21 +265,15 @@ class Simplex {
             
             min.val = p;
             min.index = r;
-            std::vector<double> v(m, min.val);
-
-            #pragma omp parallel for 
-            for (int i = r + 1; i < m; i++) {
-                v[i] = min.val;
-                if (A[i][c] > EPS) {
-                    v[i] = A[i][n] / A[i][c];
-                }
-            }
 
             #pragma omp parallel for reduction(minimum:min)
             for (int i = r + 1; i < m; i++) {
-                if (v[i] < min.val) {
-                    min.val = v[i];
-                    min.index = i;
+                if (A[i][c] > EPS) {
+                    double val = A[i][n] / A[i][c];
+                    if (val < min.val) {
+                        min.val = val;
+                        min.index = i;
+                    }
                 }
             }
             p = min.val; 
