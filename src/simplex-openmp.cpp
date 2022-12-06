@@ -11,7 +11,7 @@
 
 using namespace std;
 
-struct Compare { float val; int index; };    
+struct Compare { float val; int index; };
 #pragma omp declare reduction(minimum : struct Compare : omp_out = omp_in.val < omp_out.val ? omp_in : omp_out)
 #pragma omp declare reduction(maximum : struct Compare : omp_out = omp_in.val > omp_out.val ? omp_in : omp_out)
 
@@ -62,25 +62,25 @@ class Simplex {
         for (unsigned int i = 0; i < A.size(); i++) {
             A[i].resize(n + 1);
         }
-        
-        #pragma omp parallel for
+
+        #pragma omp parallel for simd
         for (int j = 0; j < m; j++)
             basic[j] = n + j;
 
-        #pragma omp parallel for
+        #pragma omp parallel for simd
         for (int i = 0; i < n; i++)
             nonbasic[i] = i;
-        
+
         # pragma omp parallel for
         for (int i = 0; i < m; i++) {
             A[i][n] = B[i];
-            # pragma omp parallel for
+            # pragma omp parallel for simd
             for (int j = 0; j < n; j++)
                 A[i][j] = A0[i][j];
         }
 
         // Add c vector to A
-        #pragma omp parallel for
+        #pragma omp parallel for simd
         for (int j = 0; j < n; j++)
             A[m][j] = C[j];
 
@@ -93,18 +93,18 @@ class Simplex {
         while (true) {
             int r = 0, c = 0;
             float p = 0.0;
-            
+
             struct Compare max;
             max.val = p;
             max.index = c;
-            #pragma omp parallel reduction(maximum:max)
+            #pragma omp parallel for simd reduction(maximum:max)
             for (int i = 0; i < n; i++) {
                 if (A[m][i] > max.val) {
                     max.val = A[m][i];
                     max.index = i;
                 }
             }
-            p = max.val; 
+            p = max.val;
             c = max.index;
             /*
             #pragma omp parallel
@@ -133,16 +133,16 @@ class Simplex {
             # pragma omp parallel
             {
             if (p < EPS) {
-                #pragma omp for
+                #pragma omp for simd
                 for (int j = 0; j < n; j++)
                     if (nonbasic[j] < n)
                         soln[nonbasic[j]] = 0;
 
-                # pragma omp for
+                # pragma omp for simd
                 for (int i = 0; i < m; i++)
                     if (basic[i] < n)
                         soln[basic[i]] = A[i][n];
-                
+
                 z = -A[m][n];
                 lp_type = FEASIBLE;
             }
@@ -150,13 +150,13 @@ class Simplex {
             if (lp_type == FEASIBLE) break;
 
             p = INF;
-            
+
             #pragma omp parallel
             {
                 float p_local = p;
                 int r_local = r;
 
-                #pragma omp for nowait
+                #pragma omp for simd nowait
                 for (int i = 0; i < m; i++) {
                     if (A[i][c] > EPS) {
                         float val = A[i][n] / A[i][c];
@@ -176,7 +176,7 @@ class Simplex {
                 }
             }
 
-            // Is this needed? 
+            // Is this needed?
             // #pragma omp barrier
 
             if (p == INF) {
@@ -206,12 +206,12 @@ class Simplex {
 
         A[r][c] = 1 / A[r][c];
 
-        # pragma omp parallel for
+        # pragma omp parallel for simd
         for (int j = 0; j <= n; j++) {
             if (j != c)
                 A[r][j] *= A[r][c];
         }
-        
+
         # pragma omp parallel for
         for (int i = 0; i <= m; i++) {
             if (i != r) {
@@ -229,7 +229,7 @@ class Simplex {
         int r = 0, c = 0;
         while (true) {
             float p = INF;
-            
+
             struct Compare min;
             min.val = p;
             min.index = r;
@@ -240,12 +240,12 @@ class Simplex {
                     min.index = i;
                 }
             }
-            p = min.val; 
+            p = min.val;
             r = min.index;
 
             if (p > -EPS)
                 return true;
-            
+
             p = 0.0;
             min.val = p;
             min.index = c;
@@ -256,14 +256,14 @@ class Simplex {
                     min.index = i;
                 }
             }
-            p = min.val; 
+            p = min.val;
             c = min.index;
 
             if (p > -EPS)
                 return false;
-            
+
             p = A[r][n] / A[r][c];
-            
+
             min.val = p;
             min.index = r;
 
@@ -277,7 +277,7 @@ class Simplex {
                     }
                 }
             }
-            p = min.val; 
+            p = min.val;
             r = min.index;
 
             Pivot(r, c);
@@ -327,7 +327,7 @@ int main(int argc, char *argv[]) {
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     Simplex lp(numRules, numVars, A, B, C);
-    
+
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
     if (lp.lp_type == lp.UNBOUNDED) {
