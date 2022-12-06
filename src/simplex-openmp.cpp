@@ -106,51 +106,52 @@ class Simplex {
             }
             p = max.val; 
             c = max.index;
-            /*
-            #pragma omp parallel
-            {
-                int p_local = p;
-                int c_local = c;
-
-                #pragma omp for nowait
-                for (int i = 0; i < n; i++) {
-                    if(A[m][i] > p_local) {
-                        p_local = A[m][i];
-                        c_local = i;
-                    }
-                }
-
-                #pragma omp critical
-                {
-                    if (p_local > p) {
-                        p = p_local;
-                        c = c_local;
-                    }
-                }
-            }
-            */
 
             # pragma omp parallel
             {
-            if (p < EPS) {
-                #pragma omp for
-                for (int j = 0; j < n; j++)
-                    if (nonbasic[j] < n)
-                        soln[nonbasic[j]] = 0;
+                if (p < EPS) {
+                    #pragma omp for
+                    for (int j = 0; j < n; j++)
+                        if (nonbasic[j] < n)
+                            soln[nonbasic[j]] = 0;
 
-                # pragma omp for
-                for (int i = 0; i < m; i++)
-                    if (basic[i] < n)
-                        soln[basic[i]] = A[i][n];
-                
-                z = -A[m][n];
-                lp_type = FEASIBLE;
-            }
+                    # pragma omp for
+                    for (int i = 0; i < m; i++)
+                        if (basic[i] < n)
+                            soln[basic[i]] = A[i][n];
+                    
+                    z = -A[m][n];
+                    lp_type = FEASIBLE;
+                }
             }
             if (lp_type == FEASIBLE) break;
 
             p = INF;
             
+            struct Compare min;
+            min.val = p;
+            min.index = r;
+
+            std::vector<double> v(m, min.val);
+
+            #pragma omp parallel for 
+            for (int i = 0; i < m; i++) {
+                if (A[i][c] > EPS) {
+                    v[i] = A[i][n] / A[i][c];
+                }
+            }
+
+            #pragma omp parallel for reduction(minimum:min)
+            for (int i = 0; i < m; i++) {
+                if (v[i] < min.val) {
+                    min.val = v[i];
+                    min.index = i;
+                }
+            }
+            p = min.val;
+            r = min.index;
+
+            /*
             #pragma omp parallel
             {
                 double p_local = p;
@@ -175,9 +176,7 @@ class Simplex {
                     }
                 }
             }
-
-            // Is this needed? 
-            // #pragma omp barrier
+            */
 
             if (p == INF) {
                 lp_type = UNBOUNDED;
