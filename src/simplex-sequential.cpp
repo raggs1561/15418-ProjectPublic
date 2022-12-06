@@ -13,19 +13,19 @@ class Simplex {
 
   private:
     int m, n;
-    std::vector<std::vector<double>> A;
+    std::vector<std::vector<float>> A;
     std::vector<int> basic;    // size m.  indices of basic vars
     std::vector<int> nonbasic; // size n.  indices of non-basic vars
 
   public:
-    std::vector<double> soln;
-    double z;    // return value of the objective function.
+    std::vector<float> soln;
+    float z;    // return value of the objective function.
     int lp_type; // for return.  1 if feasible, 0 if not feasible, -1 if
                  // unbounded
 
-    const double INF; // unbelivably, C++ doesn't support static doubles
+    const float INF; // unbelivably, C++ doesn't support static floats
                       // initialized in a class
-    const double EPS;
+    const float EPS;
     const static int FEASIBLE = 1; // int vars are ok though
     const static int INFEASIBLE = 0;
     const static int UNBOUNDED = -1;
@@ -43,8 +43,8 @@ class Simplex {
         Cycling is possible.  Nothing is done to mitigate loss of
         precision when the number of iterations is large.
     */
-    Simplex(int m0, int n0, std::vector<std::vector<double>> &A0,
-            std::vector<double> &B, std::vector<double> &C)
+    Simplex(int m0, int n0, std::vector<std::vector<float>> &A0,
+            std::vector<float> &B, std::vector<float> &C)
         : m(m0), n(n0), A(m0 + 1), basic(m0), nonbasic(n0), soln(n), INF(1e100),
           EPS(1e-9)
 
@@ -74,7 +74,7 @@ class Simplex {
 
         while (true) {
             int r = 0, c = 0;
-            double p = 0.0;
+            float p = 0.0;
             // p is our objective value
 
             for (int i = 0; i < n; i++) {
@@ -97,7 +97,7 @@ class Simplex {
             p = INF;
             for (int i = 0; i < m; i++) {
                 if (A[i][c] > EPS) {
-                    double v = A[i][n] / A[i][c];
+                    float v = A[i][n] / A[i][c];
                     if (v < p) {
                         p = v;
                         r = i;
@@ -151,7 +151,7 @@ class Simplex {
         int r = 0, c = 0;
 
         while (true) {
-            double p = INF;
+            float p = INF;
             for (int i = 0; i < m; i++)
                 if (A[i][n] < p)
                     p = A[r = i][n];
@@ -169,7 +169,7 @@ class Simplex {
             
             for (int i = r + 1; i < m; i++) {
                 if (A[i][c] > EPS) {
-                    double v = A[i][n] / A[i][c];
+                    float v = A[i][n] / A[i][c];
                     if (v < p) {
                         p = v;
                         r = i;
@@ -184,12 +184,12 @@ class Simplex {
 int main(int argc, char *argv[]) {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::vector<std::vector<double>> A;
+    std::vector<std::vector<float>> A;
 
     int numRules = 20000;
     int numVars = 20000;
     std::mt19937 randGen(1);
-    std::uniform_real_distribution<double>randReal(0, 100000.f);
+    std::uniform_real_distribution<float>randReal(0, std::numeric_limits<float>::max());
 
     auto randFloat = [&](){return randReal(randGen) ;};
 
@@ -204,14 +204,14 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    std::vector<double> B;
+    std::vector<float> B;
     B.resize(numRules);
     for (int i = 0; i < numRules; i++) {
         // std::cin >> B[i];
         B[i] = randFloat();
     }
 
-    std::vector<double> C;
+    std::vector<float> C;
     C.resize(numVars);
     for (int i = 0; i < numVars; i++) {
         // std::cin >> C[i];
