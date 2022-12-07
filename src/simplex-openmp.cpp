@@ -132,51 +132,19 @@ class Simplex {
             min.val = p;
             min.index = r;
 
-            std::vector<double> v(m, min.val);
-
-            #pragma omp parallel for 
-            for (int i = 0; i < m; i++) {
-                if (A[i][c] > EPS) {
-                    v[i] = A[i][n] / A[i][c];
-                }
-            }
 
             #pragma omp parallel for reduction(minimum:min)
             for (int i = 0; i < m; i++) {
-                if (v[i] < min.val) {
-                    min.val = v[i];
-                    min.index = i;
+                if (A[i][c] > EPS) {
+                    double val = A[i][n] / A[i][c];
+                    if (val < min.val) {
+                        min.val = val;
+                        min.index = i;
+                    }
                 }
             }
             p = min.val;
             r = min.index;
-
-            /*
-            #pragma omp parallel
-            {
-                double p_local = p;
-                int r_local = r;
-
-                #pragma omp for nowait
-                for (int i = 0; i < m; i++) {
-                    if (A[i][c] > EPS) {
-                        double val = A[i][n] / A[i][c];
-                        if(val < p_local) {
-                            p_local = val;
-                            r_local = i;
-                        }
-                    }
-                }
-
-                #pragma omp critical
-                {
-                    if (p_local < p) {
-                        p = p_local;
-                        r = r_local;
-                    }
-                }
-            }
-            */
 
             if (p == INF) {
                 lp_type = UNBOUNDED;
@@ -211,16 +179,19 @@ class Simplex {
                 A[r][j] *= A[r][c];
         }
         
-        # pragma omp parallel for
+        # pragma omp parallel for collapse(2)
         for (int i = 0; i <= m; i++) {
-            if (i != r) {
-                # pragma omp parallel for
+                // # pragma omp parallel for
                 for (int j = 0; j <= n; j++) {
-                    if (j != c)
+                    if (i != r && j != c)
                         A[i][j] -= A[i][c] * A[r][j];
                 }
+        }
+
+        #pragma omp parallel for
+        for (int i = 0; i <= m; i++) {
+            if (i != r)
                 A[i][c] = -A[i][c] * A[r][c];
-            }
         }
     }
 
@@ -295,9 +266,9 @@ int main(int argc, char *argv[]) {
 
     auto randFloat = [&](){return randReal(randGen) ;};
 
-    A.resize(numRules);
+    A.resize(numRules + 1);
     for (int i = 0; i < numRules; i++) {
-        A[i].resize(numVars);
+        A[i].resize(numVars + 1);
     }
     for (int i = 0; i < numRules; i++) {
         for (int j = 0; j < numVars; j++) {
