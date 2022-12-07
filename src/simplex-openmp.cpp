@@ -51,38 +51,38 @@ class Simplex {
     */
     Simplex(int m0, int n0, std::vector<std::vector<double>> &A0,
             std::vector<double> &B, std::vector<double> &C)
-        : m(m0), n(n0), A(m0 + 1), basic(m0), nonbasic(n0), soln(n), INF(1e100),
+        : m(m0), n(n0), A(std::move(A0)), basic(m0), nonbasic(n0), soln(n), INF(1e100),
           EPS(1e-9)
 
     {
+        // A = std::move(A0);
         // m constraints, n variables here
 
         // Create constraint matrix, resize to add the B matrix as the last column
-        #pragma omp parallel for
-        for (unsigned int i = 0; i < A.size(); i++) {
-            A[i].resize(n + 1);
-        }
-        
-        #pragma omp parallel for
-        for (int j = 0; j < m; j++)
-            basic[j] = n + j;
+        // #pragma omp parallel
+        // {
+            // #pragma clang loop vectorize(enable)
+            #pragma clang loop interleave(enable)
+            for (int j = 0; j < m; j++)
+                basic[j] = n + j;
 
-        #pragma omp parallel for
-        for (int i = 0; i < n; i++)
-            nonbasic[i] = i;
-        
-        # pragma omp parallel for
-        for (int i = 0; i < m; i++) {
-            A[i][n] = B[i];
-            # pragma omp parallel for
+            // #pragma clang loop vectorize(enable)
+            #pragma clang loop interleave(enable)
+            for (int i = 0; i < n; i++)
+                nonbasic[i] = i;
+            
+            // # pragma omp parallel for
+            #pragma clang loop unroll(enable)
+            // #pragma clang loop interleave(enable)
+            for (int i = 0; i < m; i++) 
+                A[i][n] = B[i];
+
+            // Add c vector to A
+            // #pragma omp parallel for
+            #pragma clang loop interleave(enable)
             for (int j = 0; j < n; j++)
-                A[i][j] = A0[i][j];
-        }
-
-        // Add c vector to A
-        #pragma omp parallel for
-        for (int j = 0; j < n; j++)
-            A[m][j] = C[j];
+                A[m][j] = C[j];
+        // }
 
         // Don't run simplex on an infeasible LP
         if (!Feasible()) {
@@ -97,7 +97,6 @@ class Simplex {
             struct Compare max;
             max.val = p;
             max.index = c;
-            #pragma omp parallel reduction(maximum:max)
             for (int i = 0; i < n; i++) {
                 if (A[m][i] > max.val) {
                     max.val = A[m][i];
@@ -106,7 +105,6 @@ class Simplex {
             }
             p = max.val; 
             c = max.index;
-
             # pragma omp parallel
             {
                 if (p < EPS) {
@@ -172,26 +170,29 @@ class Simplex {
         swap(basic[r], nonbasic[c]);
 
         A[r][c] = 1 / A[r][c];
-
-        # pragma omp parallel for
-        for (int j = 0; j <= n; j++) {
+        # pragma clang loop vectorize(assume_safety)
+        for (int j = 0; j < n+1; j++) {
             if (j != c)
                 A[r][j] *= A[r][c];
         }
-        
-        # pragma omp parallel for collapse(2)
-        for (int i = 0; i <= m; i++) {
-                // # pragma omp parallel for
-                for (int j = 0; j <= n; j++) {
-                    if (i != r && j != c)
-                        A[i][j] -= A[i][c] * A[r][j];
-                }
-        }
 
-        #pragma omp parallel for
-        for (int i = 0; i <= m; i++) {
-            if (i != r)
-                A[i][c] = -A[i][c] * A[r][c];
+        # pragma omp parallel
+        {
+            
+            # pragma omp for 
+            for (int i = 0; i < m+1; i++) {
+                    #pragma clang loop unroll(enable)
+                    for (int j = 0; j < n+1; j++) {
+                        if (i != r && j != c)
+                            A[i][j] -= A[i][c] * A[r][j];
+                    }
+            }
+
+            #pragma omp for
+            for (int i = 0; i < m+1; i++) {
+                if (i != r)
+                    A[i][c] = -A[i][c] * A[r][c];
+        }
         }
     }
 
@@ -259,15 +260,15 @@ int main(int argc, char *argv[]) {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     std::vector<std::vector<double>> A;
-    int numRules = 20000;
-    int numVars = 20000;
+    int numRules = 40000;
+    int numVars = 40000;
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
 
     auto randFloat = [&](){return randReal(randGen) ;};
 
     A.resize(numRules + 1);
-    for (int i = 0; i < numRules; i++) {
+    for (int i = 0; i < numRules + 1; i++) {
         A[i].resize(numVars + 1);
     }
     for (int i = 0; i < numRules; i++) {
