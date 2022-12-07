@@ -1,0 +1,192 @@
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 35024[ms]
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 34320[ms]
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 34372[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 19498[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 20310[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 20246[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 13149[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 12236[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 12372[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 10889[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 10224[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 9439[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 7604[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 7634[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 6244[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 4695[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 4729[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 4606[ms]
+Parallel with 10 threads
+Loaded
+The optimum is 153.244
+Time difference = 3952[ms]
+Parallel with 10 threads
+Loaded
+The optimum is 153.244
+Time difference = 3944[ms]
+Parallel with 10 threads
+Loaded
+The optimum is 153.244
+Time difference = 4075[ms]
+Parallel with 14 threads
+Loaded
+The optimum is 153.244
+Time difference = 3034[ms]
+Parallel with 14 threads
+Loaded
+The optimum is 153.244
+Time difference = 2844[ms]
+Parallel with 14 threads
+Loaded
+The optimum is 153.244
+Time difference = 2978[ms]
+Parallel with 16 threads
+Loaded
+The optimum is 153.244
+Time difference = 2663[ms]
+Parallel with 16 threads
+Loaded
+The optimum is 153.244
+Time difference = 2746[ms]
+Parallel with 16 threads
+Loaded
+The optimum is 153.244
+Time difference = 2812[ms]
+Parallel with 32 threads
+Loaded
+The optimum is 153.244
+Time difference = 2728[ms]
+Parallel with 32 threads
+Loaded
+The optimum is 153.244
+Time difference = 2705[ms]
+Parallel with 32 threads
+Loaded
+The optimum is 153.244
+Time difference = 2787[ms]
+Parallel with 48 threads
+Loaded
+The optimum is 153.244
+Time difference = 2867[ms]
+Parallel with 48 threads
+Loaded
+The optimum is 153.244
+Time difference = 2647[ms]
+Parallel with 48 threads
+Loaded
+The optimum is 153.244
+Time difference = 2626[ms]
+Parallel with 64 threads
+Loaded
+The optimum is 153.244
+Time difference = 2782[ms]
+Parallel with 64 threads
+Loaded
+The optimum is 153.244
+Time difference = 2732[ms]
+Parallel with 64 threads
+Loaded
+The optimum is 153.244
+Time difference = 3436[ms]
+Parallel with 80 threads
+Loaded
+The optimum is 153.244
+Time difference = 3344[ms]
+Parallel with 80 threads
+Loaded
+The optimum is 153.244
+Time difference = 4275[ms]
+Parallel with 80 threads
+Loaded
+The optimum is 153.244
+Time difference = 3409[ms]
+Parallel with 96 threads
+Loaded
+The optimum is 153.244
+Time difference = 3579[ms]
+Parallel with 96 threads
+Loaded
+The optimum is 153.244
+Time difference = 3672[ms]
+Parallel with 96 threads
+Loaded
+The optimum is 153.244
+Time difference = 3815[ms]
+Parallel with 112 threads
+Loaded
+The optimum is 153.244
+Time difference = 4311[ms]
+Parallel with 112 threads
+Loaded
+The optimum is 153.244
+Time difference = 4097[ms]
+Parallel with 112 threads
+Loaded
+The optimum is 153.244
+Time difference = 4086[ms]
+Parallel with 128 threads
+Loaded
+The optimum is 153.244
+Time difference = 5366[ms]
+Parallel with 128 threads
+Loaded
+The optimum is 153.244
+Time difference = 5815[ms]
+Parallel with 128 threads
+Loaded
+The optimum is 153.244
+Time difference = 5243[ms]

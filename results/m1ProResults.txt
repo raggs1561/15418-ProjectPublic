@@ -1,0 +1,120 @@
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 21385[ms]
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 21226[ms]
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 21214[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 10627[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 10621[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 10645[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 7933[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 7305[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 7934[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 5487[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 5488[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 5503[ms]
+Parallel with 5 threads
+Loaded
+The optimum is 153.244
+Time difference = 4522[ms]
+Parallel with 5 threads
+Loaded
+The optimum is 153.244
+Time difference = 4525[ms]
+Parallel with 5 threads
+Loaded
+The optimum is 153.244
+Time difference = 4533[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 3778[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 3780[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 3774[ms]
+Parallel with 7 threads
+Loaded
+The optimum is 153.244
+Time difference = 3242[ms]
+Parallel with 7 threads
+Loaded
+The optimum is 153.244
+Time difference = 3245[ms]
+Parallel with 7 threads
+Loaded
+The optimum is 153.244
+Time difference = 3295[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 2931[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 2845[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 2870[ms]
+Parallel with 9 threads
+Loaded
+The optimum is 153.244
+Time difference = 2924[ms]
+Parallel with 9 threads
+Loaded
+The optimum is 153.244
+Time difference = 2941[ms]
+Parallel with 9 threads
+Loaded
+The optimum is 153.244
+Time difference = 2939[ms]
+Parallel with 10 threads
+Loaded
+The optimum is 153.244
+Time difference = 3227[ms]
+Parallel with 10 threads
+Loaded
+The optimum is 153.244
+Time difference = 3124[ms]
+Parallel with 10 threads
+Loaded
+The optimum is 153.244
+Time difference = 2830[ms]
