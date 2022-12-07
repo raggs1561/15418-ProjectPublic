@@ -260,8 +260,8 @@ int main(int argc, char *argv[]) {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     std::vector<std::vector<double>> A;
-    int numRules = 40000;
-    int numVars = 40000;
+    int numRules = 20000;
+    int numVars = 20000;
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
 
