@@ -1,0 +1,96 @@
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 25349[ms]
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 25402[ms]
+Parallel with 1 threads
+Loaded
+The optimum is 153.244
+Time difference = 25357[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 13532[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 13542[ms]
+Parallel with 2 threads
+Loaded
+The optimum is 153.244
+Time difference = 13536[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 11661[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 11645[ms]
+Parallel with 3 threads
+Loaded
+The optimum is 153.244
+Time difference = 11641[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 11718[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 11732[ms]
+Parallel with 4 threads
+Loaded
+The optimum is 153.244
+Time difference = 11731[ms]
+Parallel with 5 threads
+Loaded
+The optimum is 153.244
+Time difference = 11762[ms]
+Parallel with 5 threads
+Loaded
+The optimum is 153.244
+Time difference = 11765[ms]
+Parallel with 5 threads
+Loaded
+The optimum is 153.244
+Time difference = 11769[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 11930[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 11932[ms]
+Parallel with 6 threads
+Loaded
+The optimum is 153.244
+Time difference = 11933[ms]
+Parallel with 7 threads
+Loaded
+The optimum is 153.244
+Time difference = 12048[ms]
+Parallel with 7 threads
+Loaded
+The optimum is 153.244
+Time difference = 12061[ms]
+Parallel with 7 threads
+Loaded
+The optimum is 153.244
+Time difference = 12048[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 12143[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 12132[ms]
+Parallel with 8 threads
+Loaded
+The optimum is 153.244
+Time difference = 12144[ms]
