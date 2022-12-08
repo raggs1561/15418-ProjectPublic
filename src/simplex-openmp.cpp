@@ -190,10 +190,6 @@ class Simplex {
     }
 
     void Pivot(int r, int c) {
-
-        // printf("pivot %d %d\n", r, c);
-        // printa();
-
         swap(basic[r], nonbasic[c]);
 
         A[r][c] = 1 / A[r][c];
@@ -203,23 +199,34 @@ class Simplex {
                 A[r][j] *= A[r][c];
         }
 
+        std::vector<double> rCol = A[r];
+
+        std::vector<double> cRow;
+        cRow.reserve(m + 1);
+        for (int i = 0; i < m + 1; i++)
+        {
+            cRow.push_back(A[i][c]);
+        }
+        
         # pragma omp parallel
         {
-            
-            # pragma omp for 
-            for (int i = 0; i < m+1; i++) {
-                    #pragma clang loop unroll(enable)
-                    for (int j = 0; j < n+1; j++) {
-                        if (i != r && j != c)
-                            A[i][j] -= A[i][c] * A[r][j];
-                    }
-            }
-
             #pragma omp for
             for (int i = 0; i < m+1; i++) {
-                if (i != r)
-                    A[i][c] = -A[i][c] * A[r][c];
+                    if (i != r) {
+                        for (int j = 0; j < c; j++) {
+                                A[i][j] -= cRow[i] * rCol[j];
+                        }
+                        for (int j = c+1; j < n+1; j++) {
+                                A[i][j] -= cRow[i] * rCol[j];
+                        }
+                    }
+            }
         }
+
+        #pragma clang unroll(enable)
+        for (int i = 0; i < m+1; i++) {
+            if (i != r)
+                A[i][c] = -A[i][c] * A[r][c];
         }
     }
 
@@ -346,7 +353,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Should not have happened" << std::endl;
     }
 
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[ms]" << std::endl;
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
