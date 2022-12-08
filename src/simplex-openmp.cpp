@@ -173,10 +173,10 @@ class Simplex {
             findPivot += std::chrono::duration_cast<std::chrono::microseconds>(pivotEnd - pivotStart).count();
         }
 
-        std::cout << "Time taken to find feasibility = " << (findFeasibility) << "[microseconds]" << std::endl;
-        std::cout << "Time taken to find variable to optimize = " << (findX) << "[microseconds]" << std::endl;
-        std::cout << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[microseconds]" << std::endl;
-        std::cout << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to find feasibility = " << (findFeasibility) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to find variable to optimize = " << (findX) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[microseconds]" << std::endl;
     }
 
   private:
@@ -298,6 +298,7 @@ int main(int argc, char *argv[]) {
     int numRules = atoi(argv[1]);
     int numVars = atoi(argv[2]);
 
+    cout << "Input size is " << numRules << " by " << numVars << std::endl;
 
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
