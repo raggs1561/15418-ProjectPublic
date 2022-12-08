@@ -8,6 +8,7 @@
 #include <chrono>
 #include <omp.h>
 #include <random>
+#include <cstdlib>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ class Simplex {
     std::vector<std::vector<double>> A;
     std::vector<int> basic;    // size m.  indices of basic vars
     std::vector<int> nonbasic; // size n.  indices of non-basic vars
+    // time taken during different parts of the Simplex algorithm
 
   public:
     std::vector<double> soln;
@@ -84,16 +86,28 @@ class Simplex {
                 A[m][j] = C[j];
         // }
 
+        double findFeasibility, findX, findConstraint, findPivot;
+
+        auto feasibilityStart = std::chrono::steady_clock::now();
         // Don't run simplex on an infeasible LP
-        if (!Feasible()) {
+        bool isFeasible = Feasible();
+        auto feasibilityEnd = (std::chrono::steady_clock::now());
+        findFeasibility = std::chrono::duration_cast<std::chrono::milliseconds>(feasibilityEnd - feasibilityStart).count();
+
+        if (!isFeasible) {
             lp_type = INFEASIBLE;
             return;
         }
+
+        findX = 0;
+        findConstraint = 0;
+        findPivot = 0;
 
         while (true) {
             int r = 0, c = 0;
             double p = 0.0;
             
+            auto xStart = std::chrono::steady_clock::now();
             struct Compare max;
             max.val = p;
             max.index = c;
@@ -105,6 +119,9 @@ class Simplex {
             }
             p = max.val; 
             c = max.index;
+            auto xEnd = std::chrono::steady_clock::now();
+            findX += std::chrono::duration_cast<std::chrono::milliseconds>(xEnd - xStart).count();
+
             # pragma omp parallel
             {
                 if (p < EPS) {
@@ -130,7 +147,7 @@ class Simplex {
             min.val = p;
             min.index = r;
 
-
+            auto constraintStart = std::chrono::steady_clock::now();
             #pragma omp parallel for reduction(minimum:min)
             for (int i = 0; i < m; i++) {
                 if (A[i][c] > EPS) {
@@ -143,13 +160,23 @@ class Simplex {
             }
             p = min.val;
             r = min.index;
+            auto constraintEnd = std::chrono::steady_clock::now();
+            findConstraint += std::chrono::duration_cast<std::chrono::milliseconds>(constraintEnd - constraintStart).count();
 
             if (p == INF) {
                 lp_type = UNBOUNDED;
                 break;
             }
+            auto pivotStart = std::chrono::steady_clock::now();
             Pivot(r, c);
+            auto pivotEnd = std::chrono::steady_clock::now();
+            findPivot += std::chrono::duration_cast<std::chrono::milliseconds>(pivotEnd - pivotStart).count();
         }
+
+        std::cout << "Time taken to find feasibility = " << (findFeasibility) << "[ms]" << std::endl;
+        std::cout << "Time taken to find variable to optimize = " << (findX) << "[ms]" << std::endl;
+        std::cout << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[ms]" << std::endl;
+        std::cout << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[ms]" << std::endl;
     }
 
   private:
@@ -260,8 +287,9 @@ int main(int argc, char *argv[]) {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     std::vector<std::vector<double>> A;
-    int numRules = 20000;
-    int numVars = 20000;
+
+    int numRules = atoi(argv[0]);
+    int numVars = atoi(argv[1]);
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
 

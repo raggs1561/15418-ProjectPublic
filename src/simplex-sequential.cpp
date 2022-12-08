@@ -6,6 +6,7 @@
 #include <vector>
 #include <chrono>
 #include <random>
+#include <cstdlib>
 
 using namespace std;
 
@@ -58,15 +59,18 @@ class Simplex {
         for (int i = 0; i < n; i++)
             nonbasic[i] = i;
 
+        // The constraints are in the nth column of A
         for (int i = 0; i < m; i++) {
             A[i][n] = B[i];
             for (int j = 0; j < n; j++)
                 A[i][j] = A0[i][j];
         }
-
+        
+        // weights for each input variable x_i is in the mth row of A
         for (int j = 0; j < n; j++)
             A[m][j] = C[j];
 
+        // Don't try to solve a problem without a solution
         if (!Feasible()) {
             lp_type = INFEASIBLE;
             return;
@@ -75,25 +79,33 @@ class Simplex {
         while (true) {
             int r = 0, c = 0;
             double p = 0.0;
-            // p is our objective value
 
+            // What's the variable x_i that impacts the LP the most
+            // where increasing x_i maximizes our objective?
             for (int i = 0; i < n; i++) {
                 if (A[m][i] > p)
                     p = A[m][c = i];
             }
-
+            
+            // The max amount we can increase our objective is effectively 0
             if (p < EPS) {
+                // Build our solution
                 for (int j = 0; j < n; j++)
                     if (nonbasic[j] < n)
                         soln[nonbasic[j]] = 0;
                 for (int i = 0; i < m; i++)
                     if (basic[i] < n)
                         soln[basic[i]] = A[i][n];
+                
+                // value of objective functions
                 z = -A[m][n];
                 lp_type = FEASIBLE;
+                
                 break;
             }
 
+            // Which constraint should we max x_i on to
+            // maximize the objective value?
             p = INF;
             for (int i = 0; i < m; i++) {
                 if (A[i][c] > EPS) {
@@ -110,6 +122,7 @@ class Simplex {
                 break;
             }
 
+            // Move to this pivot, modify array accordingly
             Pivot(r, c);
         }
     }
@@ -152,6 +165,7 @@ class Simplex {
 
         while (true) {
             double p = INF;
+            
             for (int i = 0; i < m; i++)
                 if (A[i][n] < p)
                     p = A[r = i][n];
@@ -186,8 +200,9 @@ int main(int argc, char *argv[]) {
     cin.tie(NULL);
     std::vector<std::vector<double>> A;
 
-    int numRules = 20000;
-    int numVars = 20000;
+    int numRules = atoi(argv[0]);
+    int numVars = atoi(argv[1]);
+
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
 
