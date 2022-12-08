@@ -92,7 +92,7 @@ class Simplex {
         // Don't run simplex on an infeasible LP
         bool isFeasible = Feasible();
         auto feasibilityEnd = (std::chrono::steady_clock::now());
-        findFeasibility = std::chrono::duration_cast<std::chrono::milliseconds>(feasibilityEnd - feasibilityStart).count();
+        findFeasibility = std::chrono::duration_cast<std::chrono::microseconds>(feasibilityEnd - feasibilityStart).count();
 
         if (!isFeasible) {
             lp_type = INFEASIBLE;
@@ -120,7 +120,7 @@ class Simplex {
             p = max.val; 
             c = max.index;
             auto xEnd = std::chrono::steady_clock::now();
-            findX += std::chrono::duration_cast<std::chrono::milliseconds>(xEnd - xStart).count();
+            findX += std::chrono::duration_cast<std::chrono::microseconds>(xEnd - xStart).count();
 
             # pragma omp parallel
             {
@@ -161,7 +161,7 @@ class Simplex {
             p = min.val;
             r = min.index;
             auto constraintEnd = std::chrono::steady_clock::now();
-            findConstraint += std::chrono::duration_cast<std::chrono::milliseconds>(constraintEnd - constraintStart).count();
+            findConstraint += std::chrono::duration_cast<std::chrono::microseconds>(constraintEnd - constraintStart).count();
 
             if (p == INF) {
                 lp_type = UNBOUNDED;
@@ -170,13 +170,13 @@ class Simplex {
             auto pivotStart = std::chrono::steady_clock::now();
             Pivot(r, c);
             auto pivotEnd = std::chrono::steady_clock::now();
-            findPivot += std::chrono::duration_cast<std::chrono::milliseconds>(pivotEnd - pivotStart).count();
+            findPivot += std::chrono::duration_cast<std::chrono::microseconds>(pivotEnd - pivotStart).count();
         }
 
-        std::cout << "Time taken to find feasibility = " << (findFeasibility) << "[ms]" << std::endl;
-        std::cout << "Time taken to find variable to optimize = " << (findX) << "[ms]" << std::endl;
-        std::cout << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[ms]" << std::endl;
-        std::cout << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[ms]" << std::endl;
+        std::cout << "Time taken to find feasibility = " << (findFeasibility) << "[microseconds]" << std::endl;
+        std::cout << "Time taken to find variable to optimize = " << (findX) << "[microseconds]" << std::endl;
+        std::cout << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[microseconds]" << std::endl;
+        std::cout << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[microseconds]" << std::endl;
     }
 
   private:
@@ -288,8 +288,10 @@ int main(int argc, char *argv[]) {
     cin.tie(NULL);
     std::vector<std::vector<double>> A;
 
-    int numRules = atoi(argv[0]);
-    int numVars = atoi(argv[1]);
+    int numRules = atoi(argv[1]);
+    int numVars = atoi(argv[2]);
+
+
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
 
@@ -344,7 +346,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Should not have happened" << std::endl;
     }
 
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[ms]" << std::endl;
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 

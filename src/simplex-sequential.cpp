@@ -200,8 +200,8 @@ int main(int argc, char *argv[]) {
     cin.tie(NULL);
     std::vector<std::vector<double>> A;
 
-    int numRules = atoi(argv[0]);
-    int numVars = atoi(argv[1]);
+    int numRules = atoi(argv[1]);
+    int numVars = atoi(argv[2]);
 
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
