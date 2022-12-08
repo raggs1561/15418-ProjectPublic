@@ -291,6 +291,7 @@ int main(int argc, char *argv[]) {
     int numRules = atoi(argv[1]);
     int numVars = atoi(argv[2]);
 
+    cout << "Input size is " << numRules << " by " << numVars << std::endl;
 
     std::mt19937 randGen(1);
     std::uniform_real_distribution<double>randReal(0, 100000.f);
@@ -346,7 +347,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Should not have happened" << std::endl;
     }
 
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[microseconds]" << std::endl;
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[microseconds]" << std::endl << "\n";
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
