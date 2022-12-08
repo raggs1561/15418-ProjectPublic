@@ -173,10 +173,10 @@ class Simplex {
             findPivot += std::chrono::duration_cast<std::chrono::microseconds>(pivotEnd - pivotStart).count();
         }
 
-        std::cout << "Time taken to find feasibility = " << (findFeasibility) << "[microseconds]" << std::endl;
-        std::cout << "Time taken to find variable to optimize = " << (findX) << "[microseconds]" << std::endl;
-        std::cout << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[microseconds]" << std::endl;
-        std::cout << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to find feasibility = " << (findFeasibility) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to find variable to optimize = " << (findX) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[microseconds]" << std::endl;
+        std::cout << fixed << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[microseconds]" << std::endl;
     }
 
   private:
@@ -346,7 +346,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Should not have happened" << std::endl;
     }
 
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[ms]" << std::endl;
+    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[microseconds]" << std::endl;
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
     // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
