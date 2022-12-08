@@ -23,7 +23,6 @@ class Simplex {
     std::vector<std::vector<double>> A;
     std::vector<int> basic;    // size m.  indices of basic vars
     std::vector<int> nonbasic; // size n.  indices of non-basic vars
-    // time taken during different parts of the Simplex algorithm
 
   public:
     std::vector<double> soln;
@@ -53,130 +52,77 @@ class Simplex {
     */
     Simplex(int m0, int n0, std::vector<std::vector<double>> &A0,
             std::vector<double> &B, std::vector<double> &C)
-        : m(m0), n(n0), A(std::move(A0)), basic(m0), nonbasic(n0), soln(n), INF(1e100),
+        : m(m0), n(n0), A(m0 + 1), basic(m0), nonbasic(n0), soln(n), INF(1e100),
           EPS(1e-9)
 
     {
-        // A = std::move(A0);
         // m constraints, n variables here
 
-        // Create constraint matrix, resize to add the B matrix as the last column
-        // #pragma omp parallel
-        // {
-            // #pragma clang loop vectorize(enable)
-            #pragma clang loop interleave(enable)
-            for (int j = 0; j < m; j++)
-                basic[j] = n + j;
+        for (unsigned int i = 0; i < A.size(); i++) {
+            A[i].resize(n + 1);
+        }
 
-            // #pragma clang loop vectorize(enable)
-            #pragma clang loop interleave(enable)
-            for (int i = 0; i < n; i++)
-                nonbasic[i] = i;
-            
-            // # pragma omp parallel for
-            #pragma clang loop unroll(enable)
-            // #pragma clang loop interleave(enable)
-            for (int i = 0; i < m; i++) 
-                A[i][n] = B[i];
-
-            // Add c vector to A
-            // #pragma omp parallel for
-            #pragma clang loop interleave(enable)
+        for (int j = 0; j < m; j++)
+            basic[j] = n + j;
+        for (int i = 0; i < n; i++)
+            nonbasic[i] = i;
+        
+        # pragma omp parallel for
+        for (int i = 0; i < m; i++) {
+            A[i][n] = B[i];
             for (int j = 0; j < n; j++)
-                A[m][j] = C[j];
-        // }
+                A[i][j] = A0[i][j];
+        }
 
-        double findFeasibility, findX, findConstraint, findPivot;
+        for (int j = 0; j < n; j++)
+            A[m][j] = C[j];
 
-        auto feasibilityStart = std::chrono::steady_clock::now();
-        // Don't run simplex on an infeasible LP
-        bool isFeasible = Feasible();
-        auto feasibilityEnd = (std::chrono::steady_clock::now());
-        findFeasibility = std::chrono::duration_cast<std::chrono::microseconds>(feasibilityEnd - feasibilityStart).count();
-
-        if (!isFeasible) {
+        if (!Feasible()) {
             lp_type = INFEASIBLE;
             return;
         }
-
-        findX = 0;
-        findConstraint = 0;
-        findPivot = 0;
 
         while (true) {
             int r = 0, c = 0;
             double p = 0.0;
             
-            auto xStart = std::chrono::steady_clock::now();
-            struct Compare max;
-            max.val = p;
-            max.index = c;
             for (int i = 0; i < n; i++) {
-                if (A[m][i] > max.val) {
-                    max.val = A[m][i];
-                    max.index = i;
-                }
+                if (A[m][i] > p)
+                    p = A[m][c = i];
             }
-            p = max.val; 
-            c = max.index;
-            auto xEnd = std::chrono::steady_clock::now();
-            findX += std::chrono::duration_cast<std::chrono::microseconds>(xEnd - xStart).count();
 
-            # pragma omp parallel
-            {
-                if (p < EPS) {
-                    #pragma omp for
-                    for (int j = 0; j < n; j++)
-                        if (nonbasic[j] < n)
-                            soln[nonbasic[j]] = 0;
+            if (p < EPS) {
+                # pragma omp parallel for
+                for (int j = 0; j < n; j++)
+                    if (nonbasic[j] < n)
+                        soln[nonbasic[j]] = 0;
 
-                    # pragma omp for
-                    for (int i = 0; i < m; i++)
-                        if (basic[i] < n)
-                            soln[basic[i]] = A[i][n];
-                    
-                    z = -A[m][n];
-                    lp_type = FEASIBLE;
-                }
+                # pragma omp parallel for
+                for (int i = 0; i < m; i++)
+                    if (basic[i] < n)
+                        soln[basic[i]] = A[i][n];
+                
+                z = -A[m][n];
+                lp_type = FEASIBLE;
+                break;
             }
-            if (lp_type == FEASIBLE) break;
-
             p = INF;
             
-            struct Compare min;
-            min.val = p;
-            min.index = r;
-
-            auto constraintStart = std::chrono::steady_clock::now();
-            #pragma omp parallel for reduction(minimum:min)
             for (int i = 0; i < m; i++) {
                 if (A[i][c] > EPS) {
-                    double val = A[i][n] / A[i][c];
-                    if (val < min.val) {
-                        min.val = val;
-                        min.index = i;
+                    double v = A[i][n] / A[i][c];
+                    if (v < p) {
+                        p = v;
+                        r = i;
                     }
                 }
             }
-            p = min.val;
-            r = min.index;
-            auto constraintEnd = std::chrono::steady_clock::now();
-            findConstraint += std::chrono::duration_cast<std::chrono::microseconds>(constraintEnd - constraintStart).count();
-
             if (p == INF) {
                 lp_type = UNBOUNDED;
                 break;
             }
-            auto pivotStart = std::chrono::steady_clock::now();
             Pivot(r, c);
-            auto pivotEnd = std::chrono::steady_clock::now();
-            findPivot += std::chrono::duration_cast<std::chrono::microseconds>(pivotEnd - pivotStart).count();
         }
-
-        std::cout << fixed << "Time taken to find feasibility = " << (findFeasibility) << "[microseconds]" << std::endl;
-        std::cout << fixed << "Time taken to find variable to optimize = " << (findX) << "[microseconds]" << std::endl;
-        std::cout << fixed << "Time taken to search constraints to optimize variable = " << (findConstraint) << "[microseconds]" << std::endl;
-        std::cout << fixed << "Time taken to pivot to new vertex on polytope = " << (findPivot) << "[microseconds]" << std::endl;
     }
 
   private:
@@ -190,43 +136,30 @@ class Simplex {
     }
 
     void Pivot(int r, int c) {
+
+        // printf("pivot %d %d\n", r, c);
+        // printa();
+
         swap(basic[r], nonbasic[c]);
 
         A[r][c] = 1 / A[r][c];
-        # pragma clang loop vectorize(assume_safety)
-        for (int j = 0; j < n+1; j++) {
+
+        # pragma omp parallel for
+        for (int j = 0; j <= n; j++) {
             if (j != c)
                 A[r][j] *= A[r][c];
         }
-
-        std::vector<double> rCol = A[r];
-
-        std::vector<double> cRow;
-        cRow.reserve(m + 1);
-        for (int i = 0; i < m + 1; i++)
-        {
-            cRow.push_back(A[i][c]);
-        }
         
-        # pragma omp parallel
-        {
-            #pragma omp for
-            for (int i = 0; i < m+1; i++) {
-                    if (i != r) {
-                        for (int j = 0; j < c; j++) {
-                                A[i][j] -= cRow[i] * rCol[j];
-                        }
-                        for (int j = c+1; j < n+1; j++) {
-                                A[i][j] -= cRow[i] * rCol[j];
-                        }
-                    }
-            }
-        }
-
-        #pragma clang unroll(enable)
-        for (int i = 0; i < m+1; i++) {
-            if (i != r)
+        # pragma omp parallel for
+        for (int i = 0; i <= m; i++) {
+            if (i != r) {
+                # pragma omp parallel for
+                for (int j = 0; j <= n; j++) {
+                    if (j != c)
+                        A[i][j] -= A[i][c] * A[r][j];
+                }
                 A[i][c] = -A[i][c] * A[r][c];
+            }
         }
     }
 
@@ -234,57 +167,30 @@ class Simplex {
         int r = 0, c = 0;
         while (true) {
             double p = INF;
-            
-            struct Compare min;
-            min.val = p;
-            min.index = r;
-            #pragma omp parallel for reduction(minimum:min)
-            for (int i = 0; i < m; i++) {
-                if (A[i][n] < min.val) {
-                    min.val = A[i][n];
-                    min.index = i;
-                }
-            }
-            p = min.val; 
-            r = min.index;
-
+            for (int i = 0; i < m; i++)
+                if (A[i][n] < p)
+                    p = A[r = i][n];
             if (p > -EPS)
                 return true;
             
             p = 0.0;
-            min.val = p;
-            min.index = c;
-            #pragma omp parallel for reduction(minimum:min)
-            for (int i = 0; i < n; i++) {
-                if (A[r][i] < min.val) {
-                    min.val = A[r][i];
-                    min.index = i;
-                }
-            }
-            p = min.val; 
-            c = min.index;
-
+            for (int i = 0; i < n; i++)
+                if (A[r][i] < p)
+                    p = A[r][c = i];
             if (p > -EPS)
                 return false;
             
             p = A[r][n] / A[r][c];
-            
-            min.val = p;
-            min.index = r;
 
-            #pragma omp parallel for reduction(minimum:min)
             for (int i = r + 1; i < m; i++) {
                 if (A[i][c] > EPS) {
-                    double val = A[i][n] / A[i][c];
-                    if (val < min.val) {
-                        min.val = val;
-                        min.index = i;
+                    double v = A[i][n] / A[i][c];
+                    if (v < p) {
+                        p = v;
+                        r = i;
                     }
                 }
             }
-            p = min.val; 
-            r = min.index;
-
             Pivot(r, c);
         }
     }
