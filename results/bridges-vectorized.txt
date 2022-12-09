@@ -1,0 +1,19 @@
+Parallel with {1, threads
+Input size is 0 by 0
+Loaded
+Time taken to find feasibility = 1018668.000000[microseconds]
+Time taken to find variable to optimize = 0.000000[microseconds]
+Time taken to search constraints to optimize variable = 0.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 0.000000[microseconds]
+The optimum is -0.000000
+Time difference = 2613[ms]
+Input size is 2000 by 2000
+Loaded
+Time taken to find feasibility = 1122537.000000[microseconds]
+Time taken to find variable to optimize = 100.000000[microseconds]
+Time taken to search constraints to optimize variable = 16120772.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 16788495.000000[microseconds]
+The optimum is 1002.878213
+Time difference = 44419[ms]
+Input size is 4000 by 4000
+Loaded

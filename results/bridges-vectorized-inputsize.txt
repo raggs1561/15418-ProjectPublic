@@ -1,0 +1,171 @@
+Parallel with 16 threads
+Input size is 0 by 0
+Loaded
+Time taken to find feasibility = 1976.000000[microseconds]
+Time taken to find variable to optimize = 0.000000[microseconds]
+Time taken to search constraints to optimize variable = 0.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 0.000000[microseconds]
+The optimum is -0.000000
+Time difference = 2[ms]
+Input size is 2000 by 2000
+Loaded
+Time taken to find feasibility = 986.000000[microseconds]
+Time taken to find variable to optimize = 42.000000[microseconds]
+Time taken to search constraints to optimize variable = 342.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 6639.000000[microseconds]
+The optimum is 1002.878213
+Time difference = 8[ms]
+Input size is 4000 by 4000
+Loaded
+Time taken to find feasibility = 932.000000[microseconds]
+Time taken to find variable to optimize = 47.000000[microseconds]
+Time taken to search constraints to optimize variable = 233.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 13206.000000[microseconds]
+The optimum is 206.010818
+Time difference = 14[ms]
+Input size is 8000 by 8000
+Loaded
+Time taken to find feasibility = 1060.000000[microseconds]
+Time taken to find variable to optimize = 129.000000[microseconds]
+Time taken to search constraints to optimize variable = 613.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 613490.000000[microseconds]
+The optimum is 147.679755
+Time difference = 616[ms]
+Input size is 16000 by 16000
+Loaded
+Time taken to find feasibility = 1048.000000[microseconds]
+Time taken to find variable to optimize = 229.000000[microseconds]
+Time taken to search constraints to optimize variable = 1728.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 1930364.000000[microseconds]
+The optimum is 52.993490
+Time difference = 1934[ms]
+Input size is 20000 by 20000
+Loaded
+Time taken to find feasibility = 923.000000[microseconds]
+Time taken to find variable to optimize = 990.000000[microseconds]
+Time taken to search constraints to optimize variable = 24177.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 10856418.000000[microseconds]
+The optimum is 153.243819
+Time difference = 10957[ms]
+Input size is 32000 by 32000
+Loaded
+Time taken to find feasibility = 2331.000000[microseconds]
+Time taken to find variable to optimize = 768.000000[microseconds]
+Time taken to search constraints to optimize variable = 92703.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 12595669.000000[microseconds]
+The optimum is 21.875127
+Time difference = 12766[ms]
+Parallel with 16 threads
+Input size is 0 by 0
+Loaded
+Time taken to find feasibility = 2138.000000[microseconds]
+Time taken to find variable to optimize = 0.000000[microseconds]
+Time taken to search constraints to optimize variable = 0.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 0.000000[microseconds]
+The optimum is -0.000000
+Time difference = 2[ms]
+Input size is 2000 by 2000
+Loaded
+Time taken to find feasibility = 970.000000[microseconds]
+Time taken to find variable to optimize = 43.000000[microseconds]
+Time taken to search constraints to optimize variable = 346.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 7318.000000[microseconds]
+The optimum is 1002.878213
+Time difference = 8[ms]
+Input size is 4000 by 4000
+Loaded
+Time taken to find feasibility = 950.000000[microseconds]
+Time taken to find variable to optimize = 44.000000[microseconds]
+Time taken to search constraints to optimize variable = 242.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 13073.000000[microseconds]
+The optimum is 206.010818
+Time difference = 14[ms]
+Input size is 8000 by 8000
+Loaded
+Time taken to find feasibility = 961.000000[microseconds]
+Time taken to find variable to optimize = 91.000000[microseconds]
+Time taken to search constraints to optimize variable = 462.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 320296.000000[microseconds]
+The optimum is 147.679755
+Time difference = 322[ms]
+Input size is 16000 by 16000
+Loaded
+Time taken to find feasibility = 1000.000000[microseconds]
+Time taken to find variable to optimize = 303.000000[microseconds]
+Time taken to search constraints to optimize variable = 11731.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 2523399.000000[microseconds]
+The optimum is 52.993490
+Time difference = 2557[ms]
+Input size is 20000 by 20000
+Loaded
+Time taken to find feasibility = 1082.000000[microseconds]
+Time taken to find variable to optimize = 1015.000000[microseconds]
+Time taken to search constraints to optimize variable = 47203.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 12506433.000000[microseconds]
+The optimum is 153.243819
+Time difference = 12665[ms]
+Input size is 32000 by 32000
+Loaded
+Time taken to find feasibility = 1826.000000[microseconds]
+Time taken to find variable to optimize = 722.000000[microseconds]
+Time taken to search constraints to optimize variable = 19013.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 12565132.000000[microseconds]
+The optimum is 21.875127
+Time difference = 12658[ms]
+Parallel with 16 threads
+Input size is 0 by 0
+Loaded
+Time taken to find feasibility = 886.000000[microseconds]
+Time taken to find variable to optimize = 0.000000[microseconds]
+Time taken to search constraints to optimize variable = 0.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 0.000000[microseconds]
+The optimum is -0.000000
+Time difference = 0[ms]
+Input size is 2000 by 2000
+Loaded
+Time taken to find feasibility = 919.000000[microseconds]
+Time taken to find variable to optimize = 43.000000[microseconds]
+Time taken to search constraints to optimize variable = 356.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 7140.000000[microseconds]
+The optimum is 1002.878213
+Time difference = 8[ms]
+Input size is 4000 by 4000
+Loaded
+Time taken to find feasibility = 1188.000000[microseconds]
+Time taken to find variable to optimize = 61.000000[microseconds]
+Time taken to search constraints to optimize variable = 254.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 12610.000000[microseconds]
+The optimum is 206.010818
+Time difference = 14[ms]
+Input size is 8000 by 8000
+Loaded
+Time taken to find feasibility = 982.000000[microseconds]
+Time taken to find variable to optimize = 78.000000[microseconds]
+Time taken to search constraints to optimize variable = 424.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 317812.000000[microseconds]
+The optimum is 147.679755
+Time difference = 319[ms]
+Input size is 16000 by 16000
+Loaded
+Time taken to find feasibility = 964.000000[microseconds]
+Time taken to find variable to optimize = 235.000000[microseconds]
+Time taken to search constraints to optimize variable = 1914.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 1892005.000000[microseconds]
+The optimum is 52.993490
+Time difference = 1896[ms]
+Input size is 20000 by 20000
+Loaded
+Time taken to find feasibility = 1152.000000[microseconds]
+Time taken to find variable to optimize = 912.000000[microseconds]
+Time taken to search constraints to optimize variable = 40966.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 10539431.000000[microseconds]
+The optimum is 153.243819
+Time difference = 10584[ms]
+Input size is 32000 by 32000
+Loaded
+Time taken to find feasibility = 1611.000000[microseconds]
+Time taken to find variable to optimize = 904.000000[microseconds]
+Time taken to search constraints to optimize variable = 15921.000000[microseconds]
+Time taken to pivot to new vertex on polytope = 12785147.000000[microseconds]
+The optimum is 21.875127
+Time difference = 12864[ms]
